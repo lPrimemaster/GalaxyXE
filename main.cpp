@@ -140,7 +140,7 @@ int main(int argc, char* argv)
 		x += 10;
 		y += 15;
 
-		//GLFW3 buffer swapping and event handling
+		//GLFW3 buffer swapping and event handling --
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
