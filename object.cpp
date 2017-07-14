@@ -1,7 +1,5 @@
 #include "object.h"
 
-
-
 Object::Object(Model* mesh, Shader* shaders[], const char* Uniforms)
 {
 	//Reference the mesh model for the entity
@@ -76,14 +74,14 @@ Object::Object(Model* mesh, Shader* shaders[], const char* Uniforms)
 			char fname[MAX_PARSER_CHARS];
 			sscanf(mesh->filename, "%[^/] %s", dir, fname);
 			strcpy(tmp, dir);
-			strcat(tmp, "/textures"); 
+			strcat(tmp, "/textures");
 			strcat(tmp, fname);
-			strcat(tmp, ".dds"); ///Only loading DDS (?)
-			textures[i] = createTexture(tmp);
+			strcat(tmp, ".png"); ///Only loading DDS (?)
+			textures[i] = createTexture2D(tmp);
 #if DEBUG
 			if (textures[i] == 0)
 			{
-				cout << "[Engine] ERROR: Failed to load texture! (maybe dds file doesnt exist under /textures directory or name doesn't match)" << endl;
+				cout << "[Engine] ERROR: Failed to load texture! (maybe file doesn't exist under /textures directory or name doesn't match)" << endl;
 			}
 			bool flag = glIsTexture(textures[i]);
 			if (!flag)
@@ -94,11 +92,31 @@ Object::Object(Model* mesh, Shader* shaders[], const char* Uniforms)
 
 		}
 		//Sorting texture vectors accordingly
-		vector<vmath::vec2> uv = mesh->getUV(); //This is a reference
+		vector<vmath::vec2> uv = mesh->getUV(); //This is not a reference // is a copy
+		vector<vmath::vec2> & refuv = mesh->getUV();
+		vector<vmath::vec2> tmp(uv.size());
 		for (unsigned int i = 0; i < mesh->getVertexCount(); i++)
 		{
-			//uv.swap(uv);
+			tmp.at(i) = uv.at(mesh->getUVIndices().at(getArrayPos(mesh->getIndices(), i)));
 		}
+
+#if 0 ///Change this to log txt file
+		std::cout << std::endl;
+		std::cout << "UV non aligned coordinates:" << std::endl;
+		for (unsigned int i = 0; i < refuv.size(); i++)
+		{
+			std::cout << refuv.at(i)[0] << " " << refuv.at(i)[1] << std::endl;
+		}
+
+		refuv.swap(tmp);
+		tmp.clear();
+
+		std::cout << "UV aligned coordinates:" << std::endl;
+		for (unsigned int i = 0; i < refuv.size(); i++)
+		{
+			std::cout << mesh->getUV().at(i)[0] << " " << mesh->getUV().at(i)[1] << std::endl;
+		}
+#endif // 0
 
 
 	}
@@ -134,6 +152,15 @@ Object::Object(Model* mesh, Shader* shaders[], const char* Uniforms)
 	//Initializes modelMatrix to identity
 	modelMatrix = vmath::mat4(vmath::vec4(1, 0, 0, 0), vmath::vec4(0, 1, 0, 0), vmath::vec4(0, 0, 1, 0), vmath::vec4(0, 0, 0, 1));
 
+	//Initialization of texture
+	bind(ENGINE_OBJ_PROGRAM_BIND);
+	glBindTexture(GL_TEXTURE_2D, textures[tex0]);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO[uvs]);
+	glBufferData(GL_ARRAY_BUFFER, mesh->getUV().size() * sizeof(vmath::vec2), &mesh->getUV().front(), GL_STATIC_DRAW);
+
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	glEnableVertexAttribArray(1);
 }
 
 void Object::render()
@@ -142,7 +169,7 @@ void Object::render()
 	glClearBufferfv(GL_COLOR, 0, cColor);
 	glBindVertexArray(VAO[triangles]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[indices]);
-	glDrawElements(GL_TRIANGLES, mesh->getIndices().size(), GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, (GLsizei)(mesh->getIndices().size()), GL_UNSIGNED_INT, NULL);
 }
 
 void Object::bind(GLenum flag)
@@ -181,6 +208,18 @@ Object::~Object()
 			glDeleteTextures(1, &textures[i]);
 		}
 	}
+}
+
+int Object::getArrayPos(std::vector<unsigned int> vector, unsigned int value)
+{
+	for (unsigned int i = 0; i < vector.size(); i++)
+	{
+		if (vector.at(i) == value)
+		{
+			return i;
+		}
+	}
+	return -1;
 }
 
 void Object::modelTransform(GLfloat scale, vmath::vec3 rotateDegrees, vmath::vec3 translate)

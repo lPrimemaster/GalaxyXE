@@ -35,7 +35,7 @@ void verticesDrawNormal()
 
 	GLfloat vertices[] = {
 		-0.90f, -0.90f, 0.0f,
-		 0.85f, -0.90f, 0.0f,
+		0.85f, -0.90f, 0.0f,
 		-0.90f,  0.85f, 0.0f };
 
 	glCreateBuffers(1, VBO);
@@ -124,23 +124,37 @@ int main(int argc, char* argv)
 #if DEBUG
 		int up = glfwGetKey(window, GLFW_KEY_UP);
 		int down = glfwGetKey(window, GLFW_KEY_DOWN);
-		if (up == GLFW_PRESS)
+		int left = glfwGetKey(window, GLFW_KEY_LEFT);
+		int right = glfwGetKey(window, GLFW_KEY_RIGHT);
+		int crtl = glfwGetKey(window, GLFW_KEY_LEFT_CONTROL);
+
+		if (up == GLFW_PRESS && crtl == GLFW_PRESS)
 			scale += 0.01f;
-		if (down == GLFW_PRESS)
+		if (down == GLFW_PRESS && crtl == GLFW_PRESS)
 			scale -= 0.01f;
 		if (scale <= 0.0f)
 			scale = 0.0f;
+
+		if (left == GLFW_PRESS)
+			y += 10;
+
+		if (right == GLFW_PRESS)
+			y -= 10;
+
+		if (up == GLFW_PRESS)
+			x += 10;
+
+		if (down == GLFW_PRESS)
+			x -= 10;
+
 #endif // DEBUG
 
 
-		simao->modelTransform(scale, vmath::vec3(x, y, 0), vmath::vec3(0, 0, 0));
+		simao->modelTransform(scale, vmath::vec3((float)x, (float)y, 0), vmath::vec3(0, 0, 0));
 		simao->update();
 		simao->render();
 
-		x += 10;
-		y += 15;
-
-		//GLFW3 buffer swapping and event handling --
+		//GLFW3 buffer swapping and event handling
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

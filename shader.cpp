@@ -57,7 +57,7 @@ void Shader::link(Program p)
 	programID = p.getProgram();
 }
 
-GLuint & const Shader::getProgram()
+GLuint & Shader::getProgram()
 {
 	return programID;
 }

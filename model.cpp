@@ -11,7 +11,7 @@ Model::Model(const char * filename)
 {
 	char tmp[MAX_PARSER_CHARS];
 	strcpy(tmp, filename);
-	strcat(tmp , ".obj");
+	strcat(tmp, ".obj");
 	loadObj(tmp);
 	strcpy(this->filename, filename);
 }
@@ -118,9 +118,14 @@ vector<vmath::vec2> & Model::getUV()
 	return textures;
 }
 
-vector<unsigned int> &  Model::getIndices()
+vector<unsigned int> & Model::getIndices()
 {
 	return indices;
+}
+
+vector<unsigned int> & Model::getUVIndices()
+{
+	return texturesIndex;
 }
 
 unsigned int & Model::getVertexCount()

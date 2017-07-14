@@ -18,7 +18,7 @@ public:
 private:
 	Model* mesh;
 	enum EBO { indices, numEBOs };
-	enum VBO { vertices, numVBOs };
+	enum VBO { vertices, uvs, numVBOs };
 	enum VAO { triangles, numVAOs };
 	enum UNI { model, scale, numUNIs };
 	enum TEX { tex0, numTEXs };
@@ -36,5 +36,8 @@ private:
 	GLuint textures[numTEXs];
 
 	vmath::mat4 modelMatrix;
+
+	//Helper functions
+	int getArrayPos(std::vector<unsigned int> vector, unsigned int value);
 };
 

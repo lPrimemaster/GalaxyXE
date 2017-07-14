@@ -1,14 +1,14 @@
 #version 450 core
 
 layout( location = 0 ) in vec4 vPosition;
+layout( location = 1 ) in vec2 texCoord;
 
 uniform mat4 model, view, project;
-//in vec4 coord;
 
-//out vec4 textCoord;
+out vec2 coord;
 
 void main()
 {
-	//texCoord = coord;
+	coord = texCoord;
     gl_Position = model * vPosition;
 }

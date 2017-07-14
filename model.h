@@ -11,6 +11,7 @@ public:
 	vector<vmath::vec3> & getVertices();
 	vector<vmath::vec2> & getUV();
 	vector<unsigned int> & getIndices();
+	vector<unsigned int> & getUVIndices();
 	unsigned int & getVertexCount();
 	~Model();
 
