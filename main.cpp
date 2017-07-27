@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
-#include "object.h"
+#include "common/object.h"
+#include "handler/handler.h"
 
 GLuint VAO[1];
 GLuint VBO[1];
@@ -27,136 +28,94 @@ void init(GLFWwindow** window)
 	}
 }
 
-#if 0
-void verticesDrawNormal()
-{
-	glCreateVertexArrays(1, VAO);
-	glBindVertexArray(VAO[0]);
-
-	GLfloat vertices[] = {
-		-0.90f, -0.90f, 0.0f,
-		0.85f, -0.90f, 0.0f,
-		-0.90f,  0.85f, 0.0f };
-
-	glCreateBuffers(1, VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-	glEnableVertexAttribArray(0);
-}
-
-void verticesDrawElement()
-{
-	GLushort vertIndex[] = { 0, 2, 3, 0, 1, 3 };
-
-	glCreateBuffers(1, EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[0]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vertIndex), vertIndex, GL_STATIC_DRAW);
-
-	glCreateVertexArrays(1, VAO);
-	glBindVertexArray(VAO[0]);
-
-	Vector3f a = { -0.90f, -0.90f, 0.0f };
-	Vector3f b = { 0.90f, -0.90f, 0.0f };
-	Vector3f c = { -0.90f,  0.90f, 0.0f };
-	Vector3f d = { 0.90f,  0.90f, 0.0f };
-
-	vector<Vector3f> vertice = {
-		a,
-		b,
-		c,
-		d };
-
-	vector<GLfloat> vertices = {
-		-0.90f, -0.90f, 0.0f,
-		0.90f, -0.90f, 0.0f,
-		-0.90f,  0.90f, 0.0f,
-		0.90f,  0.90f, 0.0f };
-
-	GLfloat verti[] = {
-		-0.90f, -0.90f, 0.0f,
-		0.90f, -0.90f, 0.0f,
-		-0.90f,  0.90f, 0.0f,
-		0.90f,  0.90f, 0.0f };
-
-	glCreateBuffers(1, VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-	glBufferData(GL_ARRAY_BUFFER, vertice.size() * sizeof(Vector3f), &vertice.front(), GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-	glEnableVertexAttribArray(0);
-}
-
-void drawNormal()
-{
-	static const GLfloat cColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	glClearBufferfv(GL_COLOR, 0, cColor);
-	glBindVertexArray(VAO[0]);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-}
-
-void drawElement()
-{
-	static const GLfloat cColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	glClearBufferfv(GL_COLOR, 0, cColor);
-	glBindVertexArray(VAO[0]);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[0]);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
-}
-#endif // 0
-
 int main(int argc, char* argv)
 {
 	GLFWwindow* window;
 	init(&window);
 
-	Object* simao = new Object(new Model("models/monkey"), new Shader*[2]{ new Shader(GL_VERTEX_SHADER, "media/triangles.vert"),
+	SDEBUG("Debug is active.");
+
+	Object* monkey = new Object(new Model("models/monkey"), new Shader*[2]{ new Shader(GL_VERTEX_SHADER, "media/triangles.vert"),
 		new Shader(GL_FRAGMENT_SHADER, "media/triangles.frag") }, "model");
 
-	simao->bind(ENGINE_OBJ_PROGRAM_BIND);
+	Object* latus = new Object(new Model("models/latus"), new Shader*[2]{ new Shader(GL_VERTEX_SHADER, "media/triangles.vert"),
+		new Shader(GL_FRAGMENT_SHADER, "media/triangles.frag") }, "model");
+
+	Object* gun = new Object(new Model("models/gun"), new Shader*[2]{ new Shader(GL_VERTEX_SHADER, "media/triangles.vert"),
+		new Shader(GL_FRAGMENT_SHADER, "media/triangles.frag") }, "model");
+
+	Handler* events = new Handler();
+
+	events->Register("R_X-Axis", [=](void* data) -> void {
+		int x; memcpy(&x, (char*)data, sizeof(int));
+		int y; memcpy(&y, (char*)data + sizeof(int), sizeof(int));
+		monkey->modelTransform(1.0f, vmath::vec3((float)x, (float)y, 0), vmath::vec3(0, 0, 0));
+	});
+
+	events->Register("R_Y-Axis", [=](void* data) -> void {
+		int x; memcpy(&x, (char*)data, sizeof(int));
+		int y; memcpy(&y, (char*)data + sizeof(int), sizeof(int));
+		monkey->modelTransform(1.0f, vmath::vec3((float)x, (float)y, 0), vmath::vec3(0, 0, 0));
+	});
+
+
+	static GLfloat cColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	glClearBufferfv(GL_COLOR, 0, cColor);
+
+	glDepthFunc(GL_LESS);
+	glEnable(GL_DEPTH_TEST);
 
 	while (!glfwWindowShouldClose(window))
 	{
 		static int x = 0, y = 0;
 		static float scale = 1.0f;
+		char* data = (char*)malloc(sizeof(int) * 2); //Data buffer for x and y coordinates
 
-#if DEBUG
+		memcpy(data, &x, sizeof(int));
+		memcpy(data + sizeof(int), &y, sizeof(int));
+
+
 		int up = glfwGetKey(window, GLFW_KEY_UP);
 		int down = glfwGetKey(window, GLFW_KEY_DOWN);
 		int left = glfwGetKey(window, GLFW_KEY_LEFT);
 		int right = glfwGetKey(window, GLFW_KEY_RIGHT);
-		int crtl = glfwGetKey(window, GLFW_KEY_LEFT_CONTROL);
-
-		if (up == GLFW_PRESS && crtl == GLFW_PRESS)
-			scale += 0.01f;
-		if (down == GLFW_PRESS && crtl == GLFW_PRESS)
-			scale -= 0.01f;
-		if (scale <= 0.0f)
-			scale = 0.0f;
-
-		if (left == GLFW_PRESS)
-			y += 10;
-
-		if (right == GLFW_PRESS)
-			y -= 10;
 
 		if (up == GLFW_PRESS)
-			x += 10;
+		{
+			events->Trigger("R_X-Axis", data);
+			x += 20;
+		}
+		else if (down == GLFW_PRESS)
+		{
+			events->Trigger("R_X-Axis", data);
+			x -= 20;
+		}
+		if (left == GLFW_PRESS)
+		{
+			events->Trigger("R_Y-Axis", data);
+			y += 20;
+		}
+		else if (right == GLFW_PRESS)
+		{
+			events->Trigger("R_Y-Axis", data);
+			y -= 20;
+		}
 
-		if (down == GLFW_PRESS)
-			x -= 10;
+		monkey->update();
+		monkey->render();
 
-#endif // DEBUG
+		gun->update();
+		gun->render();
 
-
-		simao->modelTransform(scale, vmath::vec3((float)x, (float)y, 0), vmath::vec3(0, 0, 0));
-		simao->update();
-		simao->render();
+		latus->modelTransform(0.1f, vmath::vec3(0, 0, 0), vmath::vec3(0, 0, 0));
+		latus->update();
+		latus->render();
 
 		//GLFW3 buffer swapping and event handling
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	glfwDestroyWindow(window);
