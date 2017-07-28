@@ -212,6 +212,7 @@ void Object::render()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[indices]);
 	glBindTexture(GL_TEXTURE_2D, this->textures[tex0]);
 	glDrawElements(GL_TRIANGLES, (GLsizei)(mesh->getIndices().size()), GL_UNSIGNED_INT, NULL);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Object::bind()

@@ -5,7 +5,7 @@
 #include <array>
 #include <vmath.h>
 
-#define DEBUG
+
 
 #ifdef DEBUG
 #define SDEBUG(x) std::cerr << "[DEBUG] " << x << std::endl;
