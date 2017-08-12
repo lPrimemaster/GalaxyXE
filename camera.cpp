@@ -2,41 +2,30 @@
 
 
 
-Camera::Camera(GLfloat fov, GLfloat aspect, GLfloat near, GLfloat far, GLboolean ortho)
+Camera::Camera(GLfloat fov, GLfloat aspect, GLfloat near, GLfloat far)
 {
-	this->fov = vmath::radians(fov);
-	this->aspect = aspect;
-	this->planes[this->near] = near;
-	this->planes[this->far] = far;
+	this->m_fov = vmath::radians(fov);
+	this->m_aspect = aspect;
+	this->m_planes[this->near] = near;
+	this->m_planes[this->far] = far;
 
-	view = vmath::lookat(vmath::vec3(0, 0, -(far + 1)), vmath::vec3(0, 0, 0), vmath::vec3(0, 1, 0));
-	if (!ortho)
-	{
-		//This is stil badly implemented
-		project = vmath::ortho(0, 0, 0, 0, this->planes[this->near], this->planes[this->far]);
-	}
-	else
-	{
-		project = vmath::perspective(this->fov, this->aspect, this->planes[this->near], this->planes[this->far]);
-	}
+	m_viewMatrix = vmath::lookat(vmath::vec3(0, 0, -(far + 1)), vmath::vec3(0, 0, 0), vmath::vec3(0, 1, 0));
+	m_projectMatrix = vmath::perspective(this->m_fov, this->m_aspect, this->m_planes[this->near], this->m_planes[this->far]);
+
 }
 
 void Camera::lookAt(vmath::vec3 eye, vmath::vec3 center, vmath::vec3 up)
 {
-	view = vmath::lookat(eye, center, up);
+	m_viewMatrix = vmath::lookat(eye, center, up);
 }
 
-vmath::mat4 & Camera::getView()
+vmath::mat4 Camera::getViewMatrix() const
 {
-	return view;
+	return m_viewMatrix;
 }
 
-vmath::mat4 & Camera::getProject()
+vmath::mat4 Camera::getProjectMatrix() const
 {
-	return project;
+	return m_projectMatrix;
 }
 
-
-Camera::~Camera()
-{
-}
