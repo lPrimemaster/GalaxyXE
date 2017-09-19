@@ -2,6 +2,10 @@
 #include <map>
 #include "../Entities/entity.h"
 #include "../Shaders/sshader.h"
+#include "../Textures/texture.h"
+
+#define GXE_BIND 0x01
+#define GXE_UNBIND 0x02
 
 class Camera;
 
@@ -9,19 +13,14 @@ class Renderer
 {
 public:
 	Renderer(const Renderer&& renderer) = delete; //Not movable
-	Renderer(std::vector<std::pair<Entity, std::string>> data);
+	Renderer() = default;
 
-	void push(std::pair<Entity, std::string> EntityID);
-	void update(Camera& camera);
-	void draw();
+	void push(Entity* entity);
+	virtual void update(Camera& camera) = 0;
+	virtual void draw() = 0;
 
-private:
-	using EntityMap = std::map<Entity, std::string>;
-	std::vector<EntityMap::iterator> identifier;
-
-private:
-	EntityMap entities;
-	SShader m_sshader;
+protected:
+	std::vector<Entity*> entities;
 	
 };
 

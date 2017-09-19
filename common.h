@@ -1,33 +1,27 @@
 #pragma once
 #include <iostream>
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include <string>
-#include <vmath.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 class Entity;
+class Texture;
 
 namespace loader
 {
 	GLuint shaderLoader(const std::string& vertexShader, const std::string& fragmentShader);
-	vmath::vec3 parseVec3(const char* buffer);
-	vmath::vec2 parseVec2(const char* buffer);
-	
-	typedef struct Dataset
-	{
-		unsigned int index;
-		unsigned int temp_uv_ind;
-		unsigned int temp_nm_ind;
-	}Dataset;
-	
-	typedef struct DatasetGroup
-	{
-		Dataset data[3];
-	}DatasetGroup;
 
-	DatasetGroup parseFace(const char* buffer);
+	glm::vec3 parseVec3(const char* buffer);
+	glm::vec2 parseVec2(const char* buffer);
+
+	Texture * loadTexture2D(std::string& filename);
 }
 
 namespace initializer
 {
 	std::pair<Entity, std::string> makePair(Entity entity, std::string identifier);
+	bool createContext(GLFWwindow* window, glm::uvec2 resolution, const char* title);
+	void checkContext(bool contextret);
 }

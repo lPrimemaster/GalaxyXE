@@ -1,10 +1,14 @@
 #include "application.h"
 
-
-void Application::initialize(vmath::uvec2 resolution, const char* title)
+void Application::initialize(glm::uvec2 resolution, const char* title)
 {
-	//GLFW3 INIT
 	glfwInit();
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_SAMPLES, 4);
+
+	//Context
 	window = glfwCreateWindow(resolution[0], resolution[1], title, NULL, NULL);
 	glfwMakeContextCurrent(window);
 
@@ -13,17 +17,15 @@ void Application::initialize(vmath::uvec2 resolution, const char* title)
 	GLenum err = glewInit();
 	if (err != GLEW_OK)
 	{
-		throw std::runtime_error("[Engine] Glew failed to initialize with error: " + std::string((char*)glewGetErrorString(err)));
+		std::cout << "[Engine] Glew failed to initialize with error: " << (char*)glewGetErrorString(err) << std::endl;
 	}
 	else
 	{
 		std::cout << "[Engine] Glew initialized! Using version: " << glewGetString(GLEW_VERSION) << std::endl;
 	}
 
-	static GLfloat cColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	glClearBufferfv(GL_COLOR, 0, cColor);
-
 	glDepthFunc(GL_LESS);
+	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
 
 	rApp = true;
@@ -85,27 +87,24 @@ void Application::popState()
 
 void Application::handleEvents()
 {
-	states.top()->handleEvents(this);
+	states.top()->handleEvents(Application::Instance());
 	glfwPollEvents();
 }
 
 void Application::update()
 {
-	states.top()->update(this);
+	states.top()->update(Application::Instance());
 }
 
 void Application::draw()
 {
-	states.top()->draw(this);
+	states.top()->draw(Application::Instance());
 
 	//GLFW3 buffer swapping and event handling
-	glfwSwapBuffers(window);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
 
-GLFWwindow * Application::rWindow()
-{
-	return window;
+	glfwSwapBuffers(window);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 bool Application::running()
@@ -117,4 +116,9 @@ void Application::quit()
 {
 	cout << "Application terminating..." << endl;
 	rApp = false;
+}
+
+Application::Application(glm::uvec2 resolution, const char* title)
+{
+	initialize(resolution, title);
 }

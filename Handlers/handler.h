@@ -6,7 +6,7 @@
 class Handler
 {
 public:
-	Handler();
+	Handler() = default;
 
 	void Register(std::string outcome, std::function<void(void*)> lambda);
 	void Trigger(const std::string & outcome, void* data);

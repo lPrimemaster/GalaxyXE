@@ -9,17 +9,17 @@ public:
 
 	void bind();
 	void unbind();
+	GLuint getID() const;
 
 protected:
 	virtual void getUniformLocations() = 0;
 
-	GLuint getID() const;
 
 	void loadInt(GLuint location, int& value);
 	void loadFloat(GLuint location, float& value);
-	void loadVector2f(GLuint location, const vmath::vec2& vector);
-	void loadVector3f(GLuint location, const vmath::vec3& vector);
-	void loadMatrix4f(GLuint location, const vmath::mat4& matrix);
+	void loadVector2f(GLuint location, const glm::vec2& vector);
+	void loadVector3f(GLuint location, const glm::vec3& vector);
+	void loadMatrix4f(GLuint location, const glm::mat4& matrix);
 
 private:
 	GLuint m_programID;

@@ -3,8 +3,13 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <exception>
 #include <map>
 #include "Entities/entity.h"
+#include "Textures/texture.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 std::string getSource(const std::string& sourceFile, const std::string& type)
 {
@@ -66,13 +71,36 @@ GLuint createProgram(GLuint vertexShader, GLuint fragmentShader)
 
 GLuint loader::shaderLoader(const std::string& vertexShader, const std::string& fragmentShader)
 {
-	std::string vSource = getSource(vertexShader, "vert");
-	std::string fSource = getSource(fragmentShader, "frag");
+	std::string vSource, fSource;
+	try 
+	{
+		vSource = getSource(vertexShader, "vert");
+		fSource = getSource(fragmentShader, "frag");
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 
-	GLuint vsID = compileShader(vSource.c_str(), GL_VERTEX_SHADER);
-	GLuint fsID = compileShader(fSource.c_str(), GL_FRAGMENT_SHADER);
-
-	GLuint programID = createProgram(vsID, fsID);
+	GLuint vsID, fsID;
+	try
+	{
+		vsID = compileShader(vSource.c_str(), GL_VERTEX_SHADER);
+		fsID = compileShader(fSource.c_str(), GL_FRAGMENT_SHADER);
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+	GLuint programID;
+	try
+	{
+		programID = createProgram(vsID, fsID);
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 
 	glDeleteShader(vsID);
 	glDeleteShader(fsID);
@@ -80,30 +108,91 @@ GLuint loader::shaderLoader(const std::string& vertexShader, const std::string& 
 	return programID;
 }
 
-vmath::vec3 loader::parseVec3(const char * buffer)
+glm::vec3 loader::parseVec3(const char * buffer)
 {
-	vmath::vec3 vector;
+	glm::vec3 vector;
 	sscanf(buffer, "%f %f %f", &vector[0], &vector[1], &vector[2]);
 	return vector;
 }
 
-vmath::vec2 loader::parseVec2(const char * buffer)
+glm::vec2 loader::parseVec2(const char * buffer)
 {
-	vmath::vec2 vector;
+	glm::vec2 vector;
 	sscanf(buffer, "%f %f", &vector[0], &vector[1]);
 	return vector;
 }
 
-loader::DatasetGroup loader::parseFace(const char * buffer)
+Texture * loader::loadTexture2D(std::string & filename)
 {
-	DatasetGroup dataset;
-	sscanf(buffer, "%u/%u/%u %u/%u/%u %u/%u/%u", &dataset.data[0].index, &dataset.data[0].temp_uv_ind, &dataset.data[0].temp_nm_ind,
-												 &dataset.data[1].index, &dataset.data[1].temp_uv_ind, &dataset.data[1].temp_nm_ind,
-												 &dataset.data[2].index, &dataset.data[2].temp_uv_ind, &dataset.data[2].temp_nm_ind);
-	return dataset;
+	Texture* texture = new Texture(); //GL_TEXTURE_2D defaults as constructor
+	unsigned char* data = stbi_load(filename.c_str(), &texture->width, &texture->height, &texture->channels, texture->forcedChannels);
+	if (data == NULL)
+	{
+		throw std::runtime_error("Error reading data from image file. At LT2D at " + __LINE__);
+	}
+
+	glGenTextures(1, &texture->texture);
+	glBindTexture(texture->target, texture->texture);
+	glTexImage2D(texture->target, 0, GL_RGB, texture->width, texture->height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	if (glIsTexture(texture->texture))
+	{
+		std::cout << "GL IS TEX INSIDE LT2D Function" << std::endl;
+	}
+	else
+	{
+		std::cout << "GL IS NOT TEX INSIDE LT2D Function" << std::endl;
+	}
+
+	stbi_image_free(data);
+
+	return texture;
 }
 
 std::pair<Entity, std::string> initializer::makePair(Entity entity, std::string identifier)
 {
 	return std::make_pair(entity, identifier);
 }
+
+bool initializer::createContext(GLFWwindow* window, glm::uvec2 resolution, const char* title)
+{
+	//GLFW3 INIT
+	glfwInit();
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+
+	//Dummy context
+	window = glfwCreateWindow(resolution[0], resolution[1], title, NULL, NULL);
+	glfwMakeContextCurrent(window);
+
+	//GLEW INIT
+	glewExperimental = true;
+	GLenum err = glewInit();
+	if (err != GLEW_OK)
+	{
+		std::cout << "[Engine] Glew failed to initialize with error: " << (char*)glewGetErrorString(err) << std::endl;
+		return false;
+	}
+	else
+	{
+		std::cout << "[Engine] Glew initialized! Using version: " << glewGetString(GLEW_VERSION) << std::endl;
+		return true;
+	}
+}
+
+
+/* Deprecated */
+void initializer::checkContext(bool contextret)
+{
+	if (!contextret)
+	{
+		std::cout << "[CheckerThread] Glew state flagged as incorrect! Terminating program!" << std::endl;
+		exit(0x3E8);
+	}
+	else
+	{
+		std::cout << "[CheckerThread] Glew state flagged as correct! Procceding to mainthread!" << std::endl;
+		putchar('\n');
+	}
+}
+

@@ -1,6 +1,7 @@
 #include "loader.h"
 #include <fstream>
 #include <sstream>
+#include "../Textures/texture.h"
 
 
 void Loader::loadFromObj(Model & model)
@@ -13,25 +14,27 @@ void Loader::loadFromObj(Model & model)
 
 	if (f == nullptr)
 	{
-		throw std::runtime_error("Couldn't open source file: " + m_path);
+		throw std::runtime_error("[Loader] Couldn't open source file: " + m_path);
 	}
 
-	std::vector<vmath::vec3> vertices;
+	std::vector<glm::vec3> vertices;
 	std::vector<unsigned int> indices;
-	std::vector<vmath::vec2> uvs;
-	std::vector<vmath::vec3> normals;
+	std::vector<glm::vec2> uvs;
+	std::vector<glm::vec3> normals;
+	unsigned int pCount = 0;
+	unsigned int line_number = 0;
 
-	std::vector<vmath::vec3> temp_normals;
-	std::vector<vmath::vec2> temp_uvs;
-	std::vector<loader::Dataset> temp_data;
+	std::vector<glm::vec3> temp_normals;
+	std::vector<glm::vec2> temp_uvs;
 
 	char p[128];
 
 	while(fgets(p, 128, f) != nullptr)
 	{
+		line_number++;
 		switch (p[0])
 		{
-			case '#': case 's': case 'u': case 'm': break;
+			case '#': case 's': case 'u': case 'm': case 'o': case 'l': break;
 			case 'v':
 				switch (p[1])
 				{
@@ -47,38 +50,85 @@ void Loader::loadFromObj(Model & model)
 				}
 				break;
 			case 'f':
-				loader::DatasetGroup tds;
-				tds = loader::parseFace(&p[2]);
-				temp_data.push_back(tds.data[0]);
-				temp_data.push_back(tds.data[1]);
-				temp_data.push_back(tds.data[2]);
+				unsigned int index[3], uv_ind[3], nm_ind[3];
+				sscanf(&p[2], "%d/%d/%d %d/%d/%d %d/%d/%d", &index[0], &uv_ind[0], &nm_ind[0],
+															&index[1], &uv_ind[1], &nm_ind[1],
+															&index[2], &uv_ind[2], &nm_ind[2]);
+				try
+				{
+					indices.push_back(index[0] - 1);
+					indices.push_back(index[1] - 1);
+					indices.push_back(index[2] - 1);
+
+					uvs.push_back(temp_uvs.at(uv_ind[0] - 1));
+					uvs.push_back(temp_uvs.at(uv_ind[1] - 1));
+					uvs.push_back(temp_uvs.at(uv_ind[2] - 1));
+
+					normals.push_back(temp_normals.at(nm_ind[0] - 1));
+					normals.push_back(temp_normals.at(nm_ind[1] - 1));
+					normals.push_back(temp_normals.at(nm_ind[2] - 1));
+				}
+				catch(std::exception& e)
+				{
+					std::cout << "[Loader] Error [at LINE " << line_number << "]: " << e.what() << std::endl;
+					exit(-1);
+				}
+
+				pCount++;
 				break;
 			default:
-				throw std::runtime_error("Uknown format caught from obj file: " + m_path);
+				throw std::runtime_error("[Loader] Uknown format caught from obj file: " + m_path + "::" + p[0]);
 				break;
 		}
 	}
 
-	for (unsigned int i = 0; i < temp_data.size(); i++)
-	{
-		indices.push_back(temp_data.at(i).index - 1); //-1 since obj files define starting index to be at 1
-		uvs.push_back(temp_uvs.at(temp_data.at(i).temp_uv_ind - 1));
-		normals.push_back(temp_normals.at(temp_data.at(i).temp_nm_ind - 1));
-	}
-
+	program->bind();
+	model.getPrimitiveCount() = pCount;
 	genVAO(model);
 	loadEBO(indices, model);
-	loadVBO(vertices, model);
-	loadVBO(uvs, model);
+	loadVBO(vertices, model, "VRT"); //Atr 0
+	loadVBO(uvs, model, "UVS"); //Atr 1
 	//Loading normals in the future [?]
 	
+	program->unbind();
 
-	std::cout << "Successfully loaded model from path: " << m_path << std::endl;
+	std::cout << "[Loader] Successfully loaded model from path: " << m_path << std::endl;
+}
+
+void Loader::loadtexture2D(Model& model)
+{
+	if (m_tex_path.empty())
+	{
+		throw std::runtime_error("[Loader] The specified object name can't be NULL.");
+	}
+
+	//glUniform1i(glGetUniformLocation(program->getID(), "sampler"), 0); ///Active GL_TEXTURE0
+	try
+	{
+		program->bind();
+		model.setTex(loader::loadTexture2D(m_tex_path));
+		program->unbind();
+	}
+	catch (std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+
+	if (!glIsTexture(model.getTex()->getTexture()))
+		throw std::runtime_error("[Loader] No texture was provided to model"); ///Change this please
+	else
+		std::cout << "[Loader] Texture loading nominal" << std::endl;
 }
 
 void Loader::setInternalPath(const std::string name)
 {
 	m_path = "DATA/Objects/" + name + ".obj";
+	m_tex_path = "DATA/Textures/" + name + ".jpg";
+}
+
+void Loader::setAttributeShader(Program * shader)
+{
+	this->program = shader;
 }
 
 void Loader::loadEBO(const std::vector<unsigned int> & indices, Model & model)
@@ -88,35 +138,35 @@ void Loader::loadEBO(const std::vector<unsigned int> & indices, Model & model)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer[0]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices.front(), GL_STATIC_DRAW);
 
-	auto emplaced = model.getBuffers().emplace(elementbuffer[0], std::string("EBO"));
+	auto emplaced = model.getBuffers().emplace(std::string("EBO"), elementbuffer[0]);
 	model.getIdentifier().push_back(emplaced.first);
 }
 
-void Loader::loadVBO(const std::vector<vmath::vec3> & data, Model & model)
+void Loader::loadVBO(const std::vector<glm::vec3> & data, Model & model, const std::string & identifier)
 {
 	GLuint buffer[1];
 	glGenBuffers(1, buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(vmath::vec3), &data.front(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec3), &data.front(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(model.getBufferCount(), 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
 	glEnableVertexAttribArray(model.getBufferCount()++);
 
-	auto emplaced = model.getBuffers().emplace(buffer[0], std::string("VBO"));
+	auto emplaced = model.getBuffers().emplace(std::string(identifier), buffer[0]);
 	model.getIdentifier().push_back(emplaced.first);
 }
 
-void Loader::loadVBO(const std::vector<vmath::vec2> & data, Model & model)
+void Loader::loadVBO(const std::vector<glm::vec2> & data, Model & model, const std::string & identifier)
 {
 	GLuint buffer[1];
 	glGenBuffers(1, buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(vmath::vec2), &data.front(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec2), &data.front(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(model.getBufferCount(), 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
 	glEnableVertexAttribArray(model.getBufferCount()++);
 
-	auto emplaced = model.getBuffers().emplace(buffer[0], std::string("VBO"));
+	auto emplaced = model.getBuffers().emplace(std::string(identifier), buffer[0]);
 	model.getIdentifier().push_back(emplaced.first);
 }
 

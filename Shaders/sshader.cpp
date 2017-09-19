@@ -2,30 +2,32 @@
 
 
 
-SShader::SShader()
-	: Program("Base", "Base")
+StaticShader::StaticShader()
+	: Program("base", "base")
 {
 	getUniformLocations();
 }
 
-SShader::SShader(const std::string& vertexShaderFile, const std::string& fragmentShaderFile)
+StaticShader::StaticShader(const std::string& vertexShaderFile, const std::string& fragmentShaderFile)
 	: Program(vertexShaderFile, fragmentShaderFile)
 {
-	
+	getUniformLocations();
 }
 
-void SShader::setProjViewMatrix(const vmath::mat4 & matrix)
+void StaticShader::setProjViewMatrix(const glm::mat4 & matrix)
 {
 	loadMatrix4f(m_locationProjViewMatrix, matrix);
 }
 
-void SShader::setModelMatrix(const vmath::mat4 & matrix)
+void StaticShader::setModelMatrix(const glm::mat4 & matrix)
 {
 	loadMatrix4f(m_locationModelMatrix, matrix);
 }
 
-void SShader::getUniformLocations()
+void StaticShader::getUniformLocations()
 {
 	m_locationProjViewMatrix = glGetUniformLocation(getID(), "ProjView");
 	m_locationModelMatrix = glGetUniformLocation(getID(), "Model");
+	printf("Model matrix location: %d\n", m_locationModelMatrix);
+	printf("ProjView matrix location: %d\n", m_locationProjViewMatrix);
 }

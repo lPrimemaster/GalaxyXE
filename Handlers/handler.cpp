@@ -1,12 +1,6 @@
 #include "handler.h"
 #include <iostream>
 
-
-
-Handler::Handler()
-{
-}
-
 void Handler::Register(std::string outcome, std::function<void(void*)> lambda)
 {
 	auto emplaced = outcomes.emplace(std::move(outcome), std::move(lambda));

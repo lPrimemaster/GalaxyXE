@@ -1,4 +1,5 @@
 #include "model.h"
+#include "../Textures/texture.h"
 
 Model::Buffer & Model::getBuffers()
 {
@@ -18,4 +19,19 @@ unsigned int & Model::getBufferCount()
 GLuint & Model::getVAO()
 {
 	return m_vao;
+}
+
+unsigned int & Model::getPrimitiveCount()
+{
+	return primitiveCount;
+}
+
+Texture * Model::getTex()
+{
+	return texture;
+}
+
+void Model::setTex(Texture * texture)
+{
+	this->texture = texture;
 }

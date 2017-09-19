@@ -89,7 +89,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\oglpg-8th-edition\include;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\glm-0.9.8.5\glm;C:\Users\cesar\Desktop\C++ Deps\stb;C:\Users\cesar\Desktop\C++ Deps\oglpg-8th-edition\include;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -104,7 +104,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\oglpg-8th-edition\include;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\glm-0.9.8.5\glm;C:\Users\cesar\Desktop\C++ Deps\stb;C:\Users\cesar\Desktop\C++ Deps\oglpg-8th-edition\include;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,7 +121,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\oglpg-8th-edition\include;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\glm-0.9.8.5\glm;C:\Users\cesar\Desktop\C++ Deps\stb;C:\Users\cesar\Desktop\C++ Deps\oglpg-8th-edition\include;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,7 +140,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\oglpg-8th-edition\include;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\glm-0.9.8.5\glm;C:\Users\cesar\Desktop\C++ Deps\stb;C:\Users\cesar\Desktop\C++ Deps\oglpg-8th-edition\include;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -159,11 +159,13 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Models\loader.cpp" />
     <ClCompile Include="Models\model.cpp" />
+    <ClCompile Include="Renderer\masterrenderer.cpp" />
     <ClCompile Include="Renderer\renderer.cpp" />
     <ClCompile Include="Shaders\program.cpp" />
     <ClCompile Include="Shaders\sshader.cpp" />
     <ClCompile Include="States\playing.cpp" />
     <ClCompile Include="States\state.cpp" />
+    <ClCompile Include="Textures\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\application.h" />
@@ -173,11 +175,13 @@
     <ClInclude Include="Handlers\handler.h" />
     <ClInclude Include="Models\loader.h" />
     <ClInclude Include="Models\model.h" />
+    <ClInclude Include="Renderer\masterrenderer.h" />
     <ClInclude Include="Renderer\renderer.h" />
     <ClInclude Include="Shaders\program.h" />
     <ClInclude Include="Shaders\sshader.h" />
     <ClInclude Include="States\playing.h" />
     <ClInclude Include="States\state.h" />
+    <ClInclude Include="Textures\texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

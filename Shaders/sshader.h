@@ -1,15 +1,15 @@
 #pragma once
 #include "program.h"
 
-class SShader : public Program
+class StaticShader : public Program
 {
 public:
-	SShader();
-	SShader(const std::string& vertexShaderFile, const std::string& fragmentShaderFile);
-	virtual ~SShader() = default;
+	StaticShader();
+	StaticShader(const std::string& vertexShaderFile, const std::string& fragmentShaderFile);
+	virtual ~StaticShader() = default;
 
-	void setProjViewMatrix(const vmath::mat4& matrix);
-	void setModelMatrix(const vmath::mat4& matrix);
+	void setProjViewMatrix(const glm::mat4& matrix);
+	void setModelMatrix(const glm::mat4& matrix);
 
 protected:
 	virtual void getUniformLocations() override;

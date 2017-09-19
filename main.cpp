@@ -1,26 +1,34 @@
+#define _CRT_SECURE_NO_WARNINGS
+
+
 #include <iostream>
 #include <vector>
-//#include "common/object.h"
-#include "Handlers/handler.h"
+#include <thread>
 #include "App/application.h"
-#include "States/playing.h"
+
+/* --------------------------------- */
+/* STATIC STATE SINGLETON DEFINITION */
+/* --------------------------------- */
+Application Application::app(glm::uvec2(1280, 720), "GalaxyXE - Pluto");
+Playing Playing::playingState;
 
 
-int main(int argc, char* argv)
+/* ---- */
+/* MAIN */
+/* ---- */
+int main(int argc, char** argv)
 {
-	Application* app = new Application();
+	Application* app = Application::Instance();
 
-	app->initialize(vmath::uvec2(1280, 720), "GalaxyXE - Pluto");
 	app->pushState(Playing::Instance());
-
 	while (app->running())
 	{
 		app->handleEvents();
 		app->update();
 		app->draw();
 	}
-
 	app->cleanup();
+
 
 	return 0;
 }

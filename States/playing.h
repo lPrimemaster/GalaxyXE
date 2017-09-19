@@ -3,6 +3,9 @@
 #include "../App/application.h"
 #include "../Models/model.h"
 #include "../Models/loader.h"
+#include "../Entities/entity.h"
+#include "../Renderer/masterrenderer.h"
+#include "../camera.h"
 
 class Playing : public State
 {
@@ -27,8 +30,24 @@ protected:
 
 private:
 	static Playing playingState;
-	Handler events;
-	Model ab;
+
+	/* Keyhandler Event */
+	Handler keyHandler;
+
+	/* Loader Class */
 	Loader loader;
+
+	/* Models Definition */
+	Model model[1];
+
+	/* Entities Definition */
+	Entity grass[2];
+
+	/* MasterRenderer Class */
+	MasterRenderer renderer;
+
+	/* Camera Class */
+	Camera cam;
+
 };
 
