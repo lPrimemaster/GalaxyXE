@@ -155,7 +155,6 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="common.cpp" />
     <ClCompile Include="Entities\entity.cpp" />
-    <ClCompile Include="Handlers\handler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Models\loader.cpp" />
     <ClCompile Include="Models\model.cpp" />
@@ -182,6 +181,10 @@
     <ClInclude Include="States\playing.h" />
     <ClInclude Include="States\state.h" />
     <ClInclude Include="Textures\texture.h" />
+    <ClInclude Include="Utils\math.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -10,6 +10,7 @@ void Application::initialize(glm::uvec2 resolution, const char* title)
 
 	//Context
 	window = glfwCreateWindow(resolution[0], resolution[1], title, NULL, NULL);
+	m_resolution = resolution;
 	glfwMakeContextCurrent(window);
 
 	//GLEW INIT
@@ -57,7 +58,7 @@ void Application::changeState(State * state)
 	}
 
 	states.push(state);
-	states.top()->initialize();
+	states.top()->initialize(Application::Instance());
 }
 
 void Application::pushState(State * state)
@@ -68,7 +69,7 @@ void Application::pushState(State * state)
 	}
 
 	states.push(state);
-	states.top()->initialize();
+	states.top()->initialize(Application::Instance());
 }
 
 void Application::popState()
@@ -121,4 +122,9 @@ void Application::quit()
 Application::Application(glm::uvec2 resolution, const char* title)
 {
 	initialize(resolution, title);
+}
+
+glm::uvec2 Application::rWindowSize()
+{
+	return m_resolution;
 }

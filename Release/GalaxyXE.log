@@ -1,0 +1,55 @@
+﻿  application.cpp
+  camera.cpp
+  common.cpp
+common.cpp(114): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\ucrt\stdio.h(2260): note: see declaration of 'sscanf'
+common.cpp(121): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\ucrt\stdio.h(2260): note: see declaration of 'sscanf'
+  entity.cpp
+  main.cpp
+  loader.cpp
+Models\loader.cpp(13): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
+Models\loader.cpp(54): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\ucrt\stdio.h(2260): note: see declaration of 'sscanf'
+  model.cpp
+  masterrenderer.cpp
+  renderer.cpp
+  program.cpp
+  sshader.cpp
+  playing.cpp
+States\playing.cpp(27): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+States\playing.cpp(28): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+  state.cpp
+  texture.cpp
+application.obj : error LNK2001: unresolved external symbol __imp__glewGetErrorString@4
+application.obj : error LNK2001: unresolved external symbol __imp__glewGetString@4
+application.obj : error LNK2001: unresolved external symbol __imp__glewExperimental
+application.obj : error LNK2001: unresolved external symbol __imp__glewInit@0
+common.obj : error LNK2001: unresolved external symbol __imp____glewGetShaderiv
+common.obj : error LNK2001: unresolved external symbol __imp____glewCompileShader
+common.obj : error LNK2001: unresolved external symbol __imp____glewCreateShader
+common.obj : error LNK2001: unresolved external symbol __imp____glewCreateProgram
+common.obj : error LNK2001: unresolved external symbol __imp____glewGetShaderInfoLog
+common.obj : error LNK2001: unresolved external symbol __imp____glewGetProgramiv
+common.obj : error LNK2001: unresolved external symbol __imp____glewAttachShader
+common.obj : error LNK2001: unresolved external symbol __imp____glewShaderSource
+common.obj : error LNK2001: unresolved external symbol __imp____glewGetProgramInfoLog
+common.obj : error LNK2001: unresolved external symbol __imp____glewDeleteShader
+common.obj : error LNK2001: unresolved external symbol __imp____glewLinkProgram
+loader.obj : error LNK2001: unresolved external symbol __imp____glewEnableVertexAttribArray
+loader.obj : error LNK2001: unresolved external symbol __imp____glewBindVertexArray
+loader.obj : error LNK2001: unresolved external symbol __imp____glewVertexAttribPointer
+loader.obj : error LNK2001: unresolved external symbol __imp____glewBindBuffer
+loader.obj : error LNK2001: unresolved external symbol __imp____glewBufferData
+loader.obj : error LNK2001: unresolved external symbol __imp____glewGenVertexArrays
+loader.obj : error LNK2001: unresolved external symbol __imp____glewGenBuffers
+program.obj : error LNK2001: unresolved external symbol __imp____glewUseProgram
+program.obj : error LNK2001: unresolved external symbol __imp____glewUniform1i
+program.obj : error LNK2001: unresolved external symbol __imp____glewUniform2f
+program.obj : error LNK2001: unresolved external symbol __imp____glewUniform1f
+program.obj : error LNK2001: unresolved external symbol __imp____glewDeleteProgram
+program.obj : error LNK2001: unresolved external symbol __imp____glewUniformMatrix4fv
+program.obj : error LNK2001: unresolved external symbol __imp____glewUniform3f
+sshader.obj : error LNK2001: unresolved external symbol __imp____glewGetUniformLocation
+C:\Users\cesar\Desktop\C++\GalaxyXE\GalaxyXE\Release\GalaxyXE.exe : fatal error LNK1120: 30 unresolved externals

@@ -10,7 +10,6 @@ void MasterRenderer::update(Camera & camera)
 {
 	m_sshader.bind();
 	m_sshader.setProjViewMatrix(camera.getProjViewMatrix());
-	t = camera.getProjViewMatrix();
 	m_sshader.unbind();
 }
 
@@ -26,13 +25,6 @@ void MasterRenderer::draw()
 		if (once)
 		{
 			printf("Pcount: %d\n", entID->getModel().getPrimitiveCount());
-			printf("MVP matrix\n");
-			glm::mat4 mvp = t * entID->getModelMatrix();
-			for (int i = 0; i < 4; i++)
-				printf("%f %f %f %f\n", t[i][0], t[i][1], t[i][2], t[i][3]);
-			printf("Model matrix\n");
-			for (int i = 0; i < 4; i++)
-				printf("%f %f %f %f\n", entID->getModelMatrix()[i][0], entID->getModelMatrix()[i][1], entID->getModelMatrix()[i][2], entID->getModelMatrix()[i][3]);
 		}
 
 		//entID->getModel().getTex()->bind(); //Use further methods

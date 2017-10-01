@@ -27,9 +27,6 @@
     <ClCompile Include="App\application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Handlers\handler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Shaders\sshader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -104,5 +101,11 @@
     <ClInclude Include="Renderer\masterrenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

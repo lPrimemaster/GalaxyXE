@@ -1,3 +1,5 @@
-﻿  camera.cpp
+﻿  playing.cpp
+c:\users\cesar\desktop\c++\galaxyxe\galaxyxe\states\playing.cpp(27): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\cesar\desktop\c++\galaxyxe\galaxyxe\states\playing.cpp(28): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
   GalaxyXE.vcxproj -> C:\Users\cesar\Desktop\C++\GalaxyXE\GalaxyXE\Debug\GalaxyXE.exe
   GalaxyXE.vcxproj -> C:\Users\cesar\Desktop\C++\GalaxyXE\GalaxyXE\Debug\GalaxyXE.pdb (Partial PDB)

@@ -34,6 +34,8 @@ public:
 		return window;
 	};
 
+	glm::uvec2 rWindowSize();
+
 	static Application * Instance()
 	{
 		return &app;
@@ -50,6 +52,8 @@ private:
 	GLFWwindow* window;
 	std::stack<State*> states;
 	bool rApp;
+
+	glm::uvec2 m_resolution;
 
 };
 

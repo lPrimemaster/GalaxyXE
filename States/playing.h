@@ -6,11 +6,12 @@
 #include "../Entities/entity.h"
 #include "../Renderer/masterrenderer.h"
 #include "../camera.h"
+#include "../Utils/math.h"
 
 class Playing : public State
 {
 public:
-	void initialize();
+	void initialize(Application * app);
 	void cleanup();
 
 	void pause();
@@ -32,19 +33,20 @@ private:
 	static Playing playingState;
 
 	/* Keyhandler Event */
-	Handler keyHandler;
+	Handler<int> keyHandler;
 
 	/* Loader Class */
 	Loader loader;
 
 	/* Models Definition */
-	Model model[1];
+	Model model[2];
 
 	/* Entities Definition */
 	Entity grass[2];
 
 	/* MasterRenderer Class */
 	MasterRenderer renderer;
+	MasterRenderer blue;
 
 	/* Camera Class */
 	Camera cam;
