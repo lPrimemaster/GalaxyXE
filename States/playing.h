@@ -7,6 +7,7 @@
 #include "../Renderer/masterrenderer.h"
 #include "../camera.h"
 #include "../Utils/math.h"
+#include "../Common/modelmanager.h"
 
 class Playing : public State
 {
@@ -39,7 +40,8 @@ private:
 	Loader loader;
 
 	/* Models Definition */
-	Model model[2];
+	ModelManager modelmanager;
+	//Model model[2];
 
 	/* Entities Definition */
 	Entity grass[2];

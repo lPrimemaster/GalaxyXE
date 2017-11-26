@@ -89,12 +89,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\glm-0.9.8.5\glm;C:\Users\cesar\Desktop\C++ Deps\stb;C:\Users\cesar\Desktop\C++ Deps\oglpg-8th-edition\include;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\glm-0.9.8.5\glm;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;C:\Users\cesar\Desktop\C++ Deps\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\lib\Release\Win32;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;glew32s.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -104,12 +104,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\glm-0.9.8.5\glm;C:\Users\cesar\Desktop\C++ Deps\stb;C:\Users\cesar\Desktop\C++ Deps\oglpg-8th-edition\include;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\glm-0.9.8.5\glm;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;C:\Users\cesar\Desktop\C++ Deps\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\lib\Release\Win32;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -121,14 +121,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\glm-0.9.8.5\glm;C:\Users\cesar\Desktop\C++ Deps\stb;C:\Users\cesar\Desktop\C++ Deps\oglpg-8th-edition\include;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\glm-0.9.8.5\glm;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;C:\Users\cesar\Desktop\C++ Deps\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\lib\Release\Win32;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,20 +140,21 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\glm-0.9.8.5\glm;C:\Users\cesar\Desktop\C++ Deps\stb;C:\Users\cesar\Desktop\C++ Deps\oglpg-8th-edition\include;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\cesar\Desktop\C++ Deps\glm-0.9.8.5\glm;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\include;C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\include;C:\Users\cesar\Desktop\C++ Deps\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Users\cesar\Desktop\C++ Deps\glew-2.1.0\lib\Release\Win32;C:\Users\cesar\Desktop\C++ Deps\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App\application.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="common.cpp" />
+    <ClCompile Include="Common\modelmanager.cpp" />
     <ClCompile Include="Entities\entity.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Models\loader.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="App\application.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="Common\modelmanager.h" />
     <ClInclude Include="Entities\entity.h" />
     <ClInclude Include="Handlers\handler.h" />
     <ClInclude Include="Models\loader.h" />

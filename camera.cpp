@@ -27,8 +27,8 @@ void Camera::fpsRH()
 	else if (yaw <= 0) yaw = 2 * PI;
 
 	direction = glm::vec3(glm::cos(yaw) * glm::sin(pitch), glm::cos(pitch), glm::sin(yaw) * glm::sin(pitch));
-	std::cout << "Looking at:" << std::endl;
-	std::cout << "X: " << direction.x << " Y: " << direction.y << " Z: " << direction.z << std::endl;
+	//std::cout << "Looking at:" << std::endl;
+	//std::cout << "X: " << direction.x << " Y: " << direction.y << " Z: " << direction.z << std::endl;
 	m_viewMatrix = glm::lookAt(eye, eye + direction, up);
 }
 

@@ -1,23 +1,29 @@
 #include "texture.h"
 
-Texture::Texture()
+Texture & Texture::operator=(Texture && tex)
 {
-	target = GL_TEXTURE_2D;
+	if (this != &tex)
+	{
+		glDeleteTextures(1, &texture);
+		texture = 0;
+		std::swap(texture, tex.texture);
+	}
+	return *this;
 }
 
-Texture::Texture(GLenum target)
+Texture::Texture(Texture&& tex) : texture(tex.texture)
 {
-	this->target = target;
+	tex.texture = 0;
+}
+
+Texture::Texture(GLuint texture)
+{
+	this->texture = texture;
 }
 
 Texture::~Texture()
 {
 	glDeleteTextures(1, &texture);
-}
-
-void Texture::forceChannels(int channels)
-{
-	forcedChannels = channels;
 }
 
 const GLuint Texture::getTexture() const

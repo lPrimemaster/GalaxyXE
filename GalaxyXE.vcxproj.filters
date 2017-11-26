@@ -57,6 +57,9 @@
     <ClCompile Include="Renderer\masterrenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Common\modelmanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h">
@@ -102,6 +105,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utils\math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\modelmanager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

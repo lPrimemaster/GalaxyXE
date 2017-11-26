@@ -1,5 +1,4 @@
 #include "model.h"
-#include "../Textures/texture.h"
 
 Model::Buffer & Model::getBuffers()
 {
@@ -26,12 +25,12 @@ unsigned int & Model::getPrimitiveCount()
 	return primitiveCount;
 }
 
-Texture * Model::getTex()
+Texture & Model::getTexObject()
 {
-	return texture;
+	return *texture;
 }
 
-void Model::setTex(Texture * texture)
+void Model::setTex(Texture& texture)
 {
-	this->texture = texture;
+	this->texture = &texture;
 }

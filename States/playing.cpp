@@ -11,6 +11,7 @@ void Playing::initialize(Application * app)
 	glfwSetInputMode(app->rWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	cam.setEye(glm::vec3(0.0f, 0.0f, -10.0f));
 
+	/* KeyHandler */
 	keyHandler.Register("R_Mouse", [=](int) -> void {
 
 		static GLFWwindow* sWindow = app->rWindow();
@@ -86,41 +87,23 @@ void Playing::initialize(Application * app)
 		cam.setEye(neye);
 	});
 
-	loader.setInternalPath("Dragon_2.5_For_Animations");
-	loader.setAttributeShader(renderer.getShader());
-	try
-	{
-		loader.loadFromObj(model[0]);
-	}
-	catch (std::runtime_error& e)
-	{
-		std::cout << e.what() << std::endl;
-	}
+	/* Resources */
+	//loader.loadModel(model[0], "Dragon_2.5_For_Animations");
+	//loader.loadModel(model[1], "floor");
 
-	loader.setInternalPath("floor");
-	try
-	{
-		loader.loadFromObj(model[1]);
-	}
-	catch (std::runtime_error& e)
-	{
-		std::cout << e.what() << std::endl;
-	}
+	//Add model and texture managers
+	modelmanager.createModelType("creatures");
+	modelmanager.paths()["creatures"].push_back("Dragon_2.5_For_Animations");
 
-	//try
-	//{
-	//	loader.loadtexture2D(model[0]);
-	//}
-	//catch (std::runtime_error& e)
-	//{
-	//	std::cout << e.what() << std::endl;
-	//}
+	modelmanager.createModelType("borders");
+	modelmanager.paths()["borders"].push_back("floor");
+	modelmanager.loadModels();
 
-	grass[1](&model[1]);
+	grass[1](&modelmanager()["borders"][0]); //<vamp that>?
 	grass[1].setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	blue.push(&grass[1]);
 
-	grass[0](&model[0]);
+	grass[0](&modelmanager()["creatures"][0]);
 	grass[0].setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	grass[0] << 0.5f;
 	renderer.push(&grass[0]);
@@ -153,7 +136,7 @@ void Playing::handleEvents(Application * app)
 void Playing::update(Application * app)
 {
 	grass[0] << glm::vec3(0.0f, 0.1f, 0.0f);
-	grass[1] << glm::vec3(0.0f, -0.1f, 0.0f);
+	grass[1] << glm::vec3(0.0f, 0.0f, 0.0f);
 	renderer.update(cam);
 	blue.update(cam);
 }

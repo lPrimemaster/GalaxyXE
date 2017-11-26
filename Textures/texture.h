@@ -4,22 +4,24 @@
 class Texture
 {
 public:
-	Texture();
-	Texture(GLenum target);
+	//Delete copy and assignment ctors
+	Texture(const Texture&) = delete;
+	Texture &operator=(const Texture&) = delete;
+	Texture &operator=(Texture &&tex);
+	
+	Texture(Texture&& tex);
 	~Texture();
 
-	friend Texture * loader::loadTexture2D(std::string & filename);
-
-	void forceChannels(int channels);
 	const GLuint getTexture() const;
 
 	void bind();
 	void unbind();
 
+	friend Texture loader::loadDDS(const std::string& filename);
+
 private:
-	GLuint texture;
+	Texture(GLuint texture);
+	GLuint texture = 0;
 	GLenum target;
-	int width = 0, height = 0;
-	int channels = 0, forcedChannels = 0; //extra params for sb_image loader lib [0 forced by default -> probably RGBA default]
 };
 

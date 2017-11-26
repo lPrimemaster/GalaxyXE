@@ -1,5 +1,6 @@
 #include "common.h"
 
+#include <stdio.h>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -8,8 +9,9 @@
 #include "Entities/entity.h"
 #include "Textures/texture.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#define GXE_FOURCC_DXT1 0x31545844 // Equivalent to "DXT1" in ASCII
+#define GXE_FOURCC_DXT3 0x33545844 // Equivalent to "DXT3" in ASCII
+#define GXE_FOURCC_DXT5 0x35545844 // Equivalent to "DXT5" in ASCII
 
 std::string getSource(const std::string& sourceFile, const std::string& type)
 {
@@ -122,30 +124,93 @@ glm::vec2 loader::parseVec2(const char * buffer)
 	return vector;
 }
 
-Texture * loader::loadTexture2D(std::string & filename)
+Texture loader::loadDDS(const std::string & filename)
 {
-	Texture* texture = new Texture(); //GL_TEXTURE_2D defaults as constructor
-	unsigned char* data = stbi_load(filename.c_str(), &texture->width, &texture->height, &texture->channels, texture->forcedChannels);
-	if (data == NULL)
+	unsigned char header[124];
+
+	FILE *fp = fopen(filename.c_str(), "rb");
+	if (fp == NULL)
 	{
-		throw std::runtime_error("Error reading data from image file. At LT2D at " + __LINE__);
+		throw std::runtime_error("[Engine] File path for texture loading not available.");
+		return Texture(0);
 	}
 
-	glGenTextures(1, &texture->texture);
-	glBindTexture(texture->target, texture->texture);
-	glTexImage2D(texture->target, 0, GL_RGB, texture->width, texture->height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-	if (glIsTexture(texture->texture))
+	char filecode[4];
+	fread(filecode, 1, 4, fp);
+	if (strncmp(filecode, "DDS ", 4) != 0)
 	{
-		std::cout << "GL IS TEX INSIDE LT2D Function" << std::endl;
-	}
-	else
-	{
-		std::cout << "GL IS NOT TEX INSIDE LT2D Function" << std::endl;
+		fclose(fp);
+		throw std::runtime_error("[Engine] File is not DDS.");
+		return Texture(0);
 	}
 
-	stbi_image_free(data);
+	fread(&header, 124, 1, fp);
 
-	return texture;
+	unsigned int height = *(unsigned int*)&(header[8]);
+	unsigned int width = *(unsigned int*)&(header[12]);
+	unsigned int linearSize = *(unsigned int*)&(header[16]);
+	unsigned int mipMapCount = *(unsigned int*)&(header[24]);
+	unsigned int fourCC = *(unsigned int*)&(header[80]);
+	
+	/* Read all the data */
+
+	unsigned char* buffer;
+	unsigned int buffSize;
+
+	buffSize = mipMapCount > 1 ? linearSize * 2 : linearSize;
+	buffer = (unsigned char*)malloc(buffSize * sizeof(unsigned char));
+	fread(buffer, 1, buffSize, fp);
+
+	fclose(fp);
+
+	unsigned int components = (fourCC == GXE_FOURCC_DXT1) ? 3 : 4;
+	unsigned int format;
+
+	switch (fourCC)
+	{
+		case GXE_FOURCC_DXT1:
+			format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+			break;
+		case GXE_FOURCC_DXT3:
+			format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+			break;
+		case GXE_FOURCC_DXT5:
+			format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+		break;
+		default:
+			free(buffer);
+			throw std::runtime_error("[Engine] Invalid texture compression format.");
+			return Texture(0);
+	}
+
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	unsigned int blockSize = (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16;
+	unsigned int offset = 0;
+
+	for (int level = 0; level < mipMapCount && (width || height); ++level)
+	{
+		unsigned int size = ((width + 3) / 4)*((height + 3) / 4)*blockSize;
+		glCompressedTexImage2D(GL_TEXTURE_2D, level, format, width, height, 0, size, buffer + offset);
+
+		offset += size;
+
+		width /= 2;
+		height /= 2;
+	}
+
+	free(buffer);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	if (glIsTexture(textureID))
+	{
+		std::cout << "[Engine] Texture loaded successfully!" << std::endl;
+	}
+
+	return Texture(textureID);
 }
 
 std::pair<Entity, std::string> initializer::makePair(Entity entity, std::string identifier)

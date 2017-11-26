@@ -16,7 +16,7 @@ namespace loader
 	glm::vec3 parseVec3(const char* buffer);
 	glm::vec2 parseVec2(const char* buffer);
 
-	Texture * loadTexture2D(std::string& filename);
+	Texture loadDDS(const std::string& filename);
 }
 
 namespace initializer

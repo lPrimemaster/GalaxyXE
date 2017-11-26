@@ -82,15 +82,12 @@ void Loader::loadFromObj(Model & model)
 		}
 	}
 
-	program->bind();
 	model.getPrimitiveCount() = pCount;
 	genVAO(model);
 	loadEBO(indices, model);
 	loadVBO(vertices, model, "VRT"); //Atr 0
 	loadVBO(uvs, model, "UVS"); //Atr 1
 	//Loading normals in the future [?]
-	
-	program->unbind();
 
 	std::cout << "[Loader] Successfully loaded model from path: " << m_path << std::endl;
 }
@@ -100,35 +97,45 @@ void Loader::loadtexture2D(Model& model)
 	if (m_tex_path.empty())
 	{
 		throw std::runtime_error("[Loader] The specified object name can't be NULL.");
+		return;
 	}
 
 	//glUniform1i(glGetUniformLocation(program->getID(), "sampler"), 0); ///Active GL_TEXTURE0
 	try
 	{
-		program->bind();
-		model.setTex(loader::loadTexture2D(m_tex_path));
-		program->unbind();
+		model.setTex(loader::loadDDS(m_tex_path));
 	}
 	catch (std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
 	}
 
-	if (!glIsTexture(model.getTex()->getTexture()))
-		throw std::runtime_error("[Loader] No texture was provided to model"); ///Change this please
+	std::cout << model.getTexObject().getTexture() << std::endl;
+
+	if (!glIsTexture(model.getTexObject().getTexture()))
+		throw std::runtime_error("[Loader] No texture was provided to model."); ///Change this please and mark model to colorized only
 	else
-		std::cout << "[Loader] Texture loading nominal" << std::endl;
+		std::cout << "[Loader] Texture loading nominal." << std::endl;
 }
 
 void Loader::setInternalPath(const std::string name)
 {
 	m_path = "DATA/Objects/" + name + ".obj";
-	m_tex_path = "DATA/Textures/" + name + ".jpg";
+	m_tex_path = "DATA/Textures/" + name + ".dds";
 }
 
-void Loader::setAttributeShader(Program * shader)
+void Loader::loadModel(Model & model, const std::string path)
 {
-	this->program = shader;
+	setInternalPath(path);
+	try
+	{
+		loadFromObj(model);
+		loadtexture2D(model);
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 }
 
 void Loader::loadEBO(const std::vector<unsigned int> & indices, Model & model)

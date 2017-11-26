@@ -11,12 +11,11 @@ public:
 	void loadFromObj(Model& model);
 	void loadtexture2D(Model& model);
 	void setInternalPath(const std::string name);
-	void setAttributeShader(Program* shader);
+	void loadModel(Model& model, const std::string path);
 
 private:
 	std::string m_path;
 	std::string m_tex_path;
-	Program* program;
 
 	void loadEBO(const std::vector<unsigned int>& indices, Model& model);
 	void loadVBO(const std::vector<glm::vec3>& data, Model& model, const std::string & identifier);

@@ -3,8 +3,7 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <map>
-
-class Texture;
+#include "../Textures/texture.h"
 
 class Model
 {
@@ -17,11 +16,8 @@ public:
 	GLuint& getVAO();
 	unsigned int& getPrimitiveCount();
 
-	Texture* getTex();
-	void setTex(Texture* texture);
-
-protected:
-	Texture* texture;
+	Texture& getTexObject();
+	void setTex(Texture& texture);
 
 private:
 
@@ -30,6 +26,8 @@ private:
 	unsigned int primitiveCount = 0;
 	std::vector<Buffer::iterator> identifier;
 	Buffer m_buffers;
+
+	Texture* texture; //THIS IS WORKING BY COPY
 
 
 };
