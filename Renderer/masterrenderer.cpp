@@ -15,34 +15,26 @@ void MasterRenderer::update(Camera & camera)
 
 void MasterRenderer::draw()
 {
-	m_sshader.bind();
-	static int count = 0;
-	//glActiveTexture(GL_TEXTURE0);
+	if (entities.empty())
+		return;
 
-	static bool once = true;
+	m_sshader.bind();
+	static float time = 0.0f;
+	m_sshader.setTime(time);
+
 	for (auto* entID : entities)
 	{
-		if (once)
-		{
-			printf("Pcount: %d\n", entID->getModel().getPrimitiveCount());
-		}
-
-		//entID->getModel().getTex()->bind(); //Use further methods
 		glBindVertexArray(entID->getModel().getVAO());
+
+		if (&entID->getTexture() != NULL) entID->getTexture().bind();
 
 		m_sshader.setModelMatrix(entID->getModelMatrix()); //Use further methods
 
 		glDrawElements(GL_TRIANGLES, entID->getModel().getPrimitiveCount() * 3, GL_UNSIGNED_INT, nullptr);
 
+		if (&entID->getTexture() != NULL) entID->getTexture().unbind(); //Use further methods
+
 		glBindVertexArray(0);
-		//entID->getModel().getTex()->unbind(); //Use further methods
 	}
-
-	once = false;
 	m_sshader.unbind();
-}
-
-StaticShader * MasterRenderer::getShader()
-{
-	return &m_sshader;
 }

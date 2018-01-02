@@ -25,12 +25,3 @@ unsigned int & Model::getPrimitiveCount()
 	return primitiveCount;
 }
 
-Texture & Model::getTexObject()
-{
-	return *texture;
-}
-
-void Model::setTex(Texture& texture)
-{
-	this->texture = &texture;
-}

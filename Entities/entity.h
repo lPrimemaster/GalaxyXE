@@ -12,6 +12,7 @@ public:
 	~Entity();
 
 	Model& getModel();
+	Texture& getTexture();
 
 	void setPosition(glm::vec3 newPos);
 	glm::mat4 getModelMatrix();
@@ -19,6 +20,11 @@ public:
 	void operator()(Model* model)
 	{
 		this->model = model;
+	}
+
+	void operator()(Texture* texture)
+	{
+		this->texture = texture;
 	}
 
 	void operator<<(float scale)
@@ -35,6 +41,7 @@ public:
 
 protected:
 	Model* model;
+	Texture* texture;
 
 private:
 	glm::vec3 position;

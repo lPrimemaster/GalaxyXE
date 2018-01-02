@@ -16,6 +16,7 @@ public:
 	Renderer() = default;
 
 	void push(Entity* entity);
+	void remove(Entity* entity);
 	virtual void update(Camera& camera) = 0;
 	virtual void draw() = 0;
 

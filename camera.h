@@ -32,7 +32,7 @@ private:
 	glm::vec3 direction;
 	const glm::vec3 up;
 
-	GLfloat pitch; //Phi
-	GLfloat yaw; //Theta
+	GLfloat pitch = 0.0f; //Phi
+	GLfloat yaw = 0.0f; //Theta
 
 };

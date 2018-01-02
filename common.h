@@ -5,9 +5,10 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <vector>
 
 class Entity;
-class Texture;
+
 
 namespace loader
 {
@@ -16,7 +17,103 @@ namespace loader
 	glm::vec3 parseVec3(const char* buffer);
 	glm::vec2 parseVec2(const char* buffer);
 
-	Texture loadDDS(const std::string& filename);
+}
+
+namespace collada
+{
+	class Float_Array
+	{
+		unsigned int m_count;
+		std::string m_ID;
+		float* m_floats;
+	};
+
+	class Name_Array
+	{
+		unsigned int m_count;
+		std::string m_ID;
+		std::string* m_floats;
+	};
+
+	class Param
+	{
+		std::string m_name;
+		std::string m_type;
+	};
+
+	class Accessor
+	{
+		std::string m_source;
+		unsigned int m_count;
+		unsigned int m_stride;
+		std::vector<Param> m_params;
+	};
+
+	class Technique_Common
+	{
+		Accessor m_accessor;
+	};
+
+	class Source
+	{
+		std::string m_ID;
+		Float_Array m_float_array;
+		Name_Array m_name_array;
+		Technique_Common m_technique_common;
+	};
+
+	class Input
+	{
+		std::string m_semantic;
+		std::string m_source;
+		std::string m_offset;
+		std::string m_set;
+	};
+
+	class Vertices
+	{
+		std::string m_ID;
+		std::vector<Input> m_inputs;
+	};
+
+	class P
+	{
+		unsigned int m_count;
+		unsigned short* m_indices;
+	};
+
+	class Triangles
+	{
+		unsigned int m_count;
+		std::string m_material;
+		std::vector<Input> m_inputs;
+		P m_p;
+	};
+
+	class Mesh
+	{
+		unsigned int m_count;
+		Vertices m_vertices;
+		std::vector<Triangles> m_triangles;
+	};
+
+	class Geometry
+	{
+	private:
+		Mesh m_mesh;
+	};
+
+	class GeometryLibrary
+	{
+	private:
+		std::vector<Geometry> m_geometries;
+	};
+
+	class Collada
+	{
+	private:
+		GeometryLibrary m_geomLib;
+	};
 }
 
 namespace initializer

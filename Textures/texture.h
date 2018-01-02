@@ -1,15 +1,13 @@
 #pragma once
 #include "../common.h"
+#include "../Models/loader.h"
 
 class Texture
 {
+	friend class Loader;
+
 public:
-	//Delete copy and assignment ctors
-	Texture(const Texture&) = delete;
-	Texture &operator=(const Texture&) = delete;
-	Texture &operator=(Texture &&tex);
-	
-	Texture(Texture&& tex);
+	Texture() = default;
 	~Texture();
 
 	const GLuint getTexture() const;
@@ -17,11 +15,11 @@ public:
 	void bind();
 	void unbind();
 
-	friend Texture loader::loadDDS(const std::string& filename);
+private:
+	void build(GLuint texture);
 
 private:
-	Texture(GLuint texture);
 	GLuint texture = 0;
-	GLenum target;
+	GLenum target = GL_TEXTURE_2D; //Using this by default
 };
 

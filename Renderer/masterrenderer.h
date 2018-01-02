@@ -9,7 +9,6 @@ public:
 	virtual void update(Camera& camera) override;
 	virtual void draw() override;
 
-	StaticShader* getShader();
 
 private:
 	StaticShader m_sshader;

@@ -2,14 +2,14 @@
 #include "../Entities/entity.h"
 #include "../Utils/math.h"
 
-Playing::Playing() : renderer("base", "green"), blue("base", "blue"), cam(45.0f, 16.0f/9.0f, 0.1f, 100.0f) { }
+Playing::Playing() : renderer("base", "base"), blue("base", "blue"), cam(45.0f, 16.0f/9.0f, 0.1f, 100.0f) { }
 
 void Playing::initialize(Application * app)
 {
 	//glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glfwSetInputMode(app->rWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	cam.setEye(glm::vec3(0.0f, 0.0f, -10.0f));
+	cam.setEye(glm::vec3(0.0f, 0.0f, 0.0f));
 
 	/* KeyHandler */
 	keyHandler.Register("R_Mouse", [=](int) -> void {
@@ -86,28 +86,68 @@ void Playing::initialize(Application * app)
 		neye = oeye + direction * dx * MX_SENSITIVITY + newDir * dy * MY_SENSITIVITY + ydir * dz * MZ_SENSITIVITY;
 		cam.setEye(neye);
 	});
-
-	/* Resources */
-	//loader.loadModel(model[0], "Dragon_2.5_For_Animations");
-	//loader.loadModel(model[1], "floor");
+	keyHandler.Register("ToggleRenderer", [=](int) -> void {
+		int z = glfwGetKey(app->rWindow(), GLFW_KEY_Z);
+		int x = glfwGetKey(app->rWindow(), GLFW_KEY_X);
+		if (z == GLFW_PRESS)
+		{
+			renderer.push(&grass[1]);
+		}
+		else if (x == GLFW_PRESS)
+		{
+			renderer.remove(&grass[1]);
+		}
+	});
 
 	//Add model and texture managers
 	modelmanager.createModelType("creatures");
-	modelmanager.paths()["creatures"].push_back("Dragon_2.5_For_Animations");
+	texturemanager.createTextureType("creatures");
 
-	modelmanager.createModelType("borders");
-	modelmanager.paths()["borders"].push_back("floor");
+	texturemanager.paths()["creatures"].push_back("STexture");
+	texturemanager.paths()["creatures"].push_back("pasta");
+	modelmanager.paths()["creatures"].push_back("STexture");
+
 	modelmanager.loadModels();
+	texturemanager.loadTextures();
 
-	grass[1](&modelmanager()["borders"][0]); //<vamp that>?
-	grass[1].setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-	blue.push(&grass[1]);
+	/* Test Zone */
 
-	grass[0](&modelmanager()["creatures"][0]);
+	std::vector<glm::vec3> vertices =
+	{
+		glm::vec3(-1.0f, 1.0f, 0.0f), //4
+		glm::vec3(-1.0f, -1.0f, 0.0f), //3
+		glm::vec3(1.0f, 1.0f, 0.0f), //1
+		glm::vec3(1.0f, -1.0f, 0.0f) //2
+	};
+
+	std::vector<unsigned int> indices =
+	{
+		1, 2, 0, 1, 3, 2
+	};
+
+	std::vector<glm::vec2> uvs =
+	{
+		glm::vec2(1.0f, 0.0f),
+		glm::vec2(0.0f, 1.0f),
+		glm::vec2(0.0f, 0.0f),
+		glm::vec2(1.0f, 0.0f),
+		glm::vec2(1.0f, 1.0f),
+		glm::vec2(0.0f, 1.0f)
+	};
+
+	loader.loadRaw(rawmodel, vertices, indices, uvs);
+
+
+	//use nullptr for models and textures handling
+	grass[0](modelmanager()["creatures"]["STexture"]);
+	grass[0](texturemanager()["creatures"]["STexture"]);
 	grass[0].setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-	grass[0] << 0.5f;
 	renderer.push(&grass[0]);
 
+	grass[1](&rawmodel);
+	grass[1](texturemanager()["creatures"]["pasta"]);
+	grass[1].setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	//blue.push(&grass[1]);
 }
 
 void Playing::cleanup()
@@ -126,6 +166,7 @@ void Playing::handleEvents(Application * app)
 {
 	keyHandler.Trigger("R_Mouse", NULL);
 	keyHandler.Trigger("T_Move", NULL);
+	keyHandler.Trigger("ToggleRenderer", NULL);
 
 	if (glfwWindowShouldClose(app->rWindow()))
 	{
@@ -135,8 +176,8 @@ void Playing::handleEvents(Application * app)
 
 void Playing::update(Application * app)
 {
-	grass[0] << glm::vec3(0.0f, 0.1f, 0.0f);
-	grass[1] << glm::vec3(0.0f, 0.0f, 0.0f);
+	//grass[0] << glm::vec3(0.0f, 0.1f, 0.0f);
+	//grass[1] << glm::vec3(0.0f, 0.0f, 0.0f);
 	renderer.update(cam);
 	blue.update(cam);
 }

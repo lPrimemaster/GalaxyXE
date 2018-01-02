@@ -8,6 +8,7 @@
 #include "../camera.h"
 #include "../Utils/math.h"
 #include "../Common/modelmanager.h"
+#include "../Common/texturemanager.h"
 
 class Playing : public State
 {
@@ -36,17 +37,19 @@ private:
 	/* Keyhandler Event */
 	Handler<int> keyHandler;
 
-	/* Loader Class */
-	Loader loader;
-
 	/* Models Definition */
 	ModelManager modelmanager;
-	//Model model[2];
+
+	/* Textures Definition */
+	TextureManager texturemanager;
+
+	Model rawmodel;
+	Loader loader;
 
 	/* Entities Definition */
 	Entity grass[2];
 
-	/* MasterRenderer Class */
+	/* Renderers */
 	MasterRenderer renderer;
 	MasterRenderer blue;
 

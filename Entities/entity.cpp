@@ -15,6 +15,11 @@ Model & Entity::getModel()
 	return *model;
 }
 
+Texture & Entity::getTexture()
+{
+	return *texture;
+}
+
 void Entity::setPosition(glm::vec3 newPos)
 {
 	position = newPos;

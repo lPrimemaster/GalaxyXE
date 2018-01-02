@@ -3,7 +3,6 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <map>
-#include "../Textures/texture.h"
 
 class Model
 {
@@ -16,9 +15,6 @@ public:
 	GLuint& getVAO();
 	unsigned int& getPrimitiveCount();
 
-	Texture& getTexObject();
-	void setTex(Texture& texture);
-
 private:
 
 	GLuint m_vao = 0;
@@ -26,9 +22,6 @@ private:
 	unsigned int primitiveCount = 0;
 	std::vector<Buffer::iterator> identifier;
 	Buffer m_buffers;
-
-	Texture* texture; //THIS IS WORKING BY COPY
-
 
 };
 
