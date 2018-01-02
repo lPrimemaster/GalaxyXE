@@ -49,10 +49,28 @@ void OBJparser::read(GXE_Flags flags)
 	}
 
 	//Coordinate rearrange
-	int i = 0;
-	for (auto uv : tuvs)
+	std::cout << "UInd Size:" << uvs_ind.size() << std::endl;
+	std::cout << "uvs Size:" << uvs.size() << std::endl;
+	for (int i = 0; i < uvs_ind.size(); i++)
 	{
 		uvs.push_back(tuvs[uvs_ind[i++]]);
+	}
+	int j = 0;
+	for (auto uv : uvs)
+	{
+		std::cout << uv.x << " - " << uv.y << " [" << ++j << "]" << std::endl;
+	}
+
+	j = 0;
+	for (auto tuv : tuvs)
+	{
+		std::cout << tuv.x << " - " << tuv.y << " [" << ++j << "]" << std::endl;
+	}
+
+	j = 0;
+	for (auto uvi : uvs_ind)
+	{
+		std::cout << uvi << " [" << ++j << "]" << std::endl;
 	}
 
 	if (flags & 0x0EF3) //No textures
