@@ -1,3 +1,10 @@
-﻿  masterrenderer.cpp
+﻿  loader.cpp
+c:\users\cesar\desktop\c++\galaxyxe\galaxyxe\utils\xmlparser\stringutils.h(25): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\string.h(439): note: see declaration of 'strtok'
+c:\users\cesar\desktop\c++\galaxyxe\galaxyxe\utils\xmlparser\stringutils.h(31): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\string.h(439): note: see declaration of 'strtok'
+c:\users\cesar\desktop\c++\galaxyxe\galaxyxe\utils\objparser\objparser.h(93): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
+c:\users\cesar\desktop\c++\galaxyxe\galaxyxe\utils\objparser\objparser.h(148): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
   GalaxyXE.vcxproj -> C:\Users\cesar\Desktop\C++\GalaxyXE\GalaxyXE\Debug\GalaxyXE.exe
-  GalaxyXE.vcxproj -> C:\Users\cesar\Desktop\C++\GalaxyXE\GalaxyXE\Debug\GalaxyXE.pdb (Partial PDB)

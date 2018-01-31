@@ -1,7 +1,5 @@
 #include "camera.h"
 
-
-
 Camera::Camera(GLfloat fov, GLfloat aspect, GLfloat near, GLfloat far) : m_fov(glm::radians(fov)), m_aspect(aspect), pitch(PI/2), yaw(PI/2), up(glm::vec3(0.0f, 1.0f, 0.0f))
 {
 	this->m_planes[this->near] = near;

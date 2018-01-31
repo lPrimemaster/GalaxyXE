@@ -20,3 +20,22 @@ void Renderer::remove(Entity * entity)
 	}
 }
 
+void Renderer::push(Light * light)
+{
+	lights.push_back(light);
+}
+
+void Renderer::remove(Light * light)
+{
+	std::vector<Light*>::iterator it;
+	it = lights.begin();
+	for (it = lights.begin(); it != lights.end(); it++)
+	{
+		if (light == *it)
+		{
+			lights.erase(it);
+			return;
+		}
+	}
+}
+

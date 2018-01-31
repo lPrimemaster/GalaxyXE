@@ -13,7 +13,7 @@ class Loader
 public:
 	void loadFromObj(Model& model);
 	void loadFromCollada(Model& model);
-	void loadRaw(Model & model, std::vector<glm::vec3> vertices, std::vector<unsigned int> indices, std::vector<glm::vec2> uvs);
+	void loadRaw(Model & model, std::vector<glm::vec3> vertices, std::vector<unsigned int> indices, std::vector<glm::vec2> uvs, std::vector<glm::vec3> normals);
 
 	void loadtexture2D(Texture& texture);
 	void setModInternalPath(const std::string name);

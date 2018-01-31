@@ -56,5 +56,8 @@ private:
 	/* Camera Class */
 	Camera cam;
 
+	/* Lights */
+	Light ambiance[2];
+
 };
 

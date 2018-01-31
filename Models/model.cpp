@@ -20,8 +20,8 @@ GLuint & Model::getVAO()
 	return m_vao;
 }
 
-unsigned int & Model::getPrimitiveCount()
+unsigned int & Model::getVertexCount()
 {
-	return primitiveCount;
+	return vertexCount;
 }
 

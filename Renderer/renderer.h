@@ -17,11 +17,16 @@ public:
 
 	void push(Entity* entity);
 	void remove(Entity* entity);
+
+	void push(Light* light);
+	void remove(Light* light);
+
 	virtual void update(Camera& camera) = 0;
 	virtual void draw() = 0;
 
 protected:
 	std::vector<Entity*> entities;
+	std::vector<Light*> lights;
 	
 };
 

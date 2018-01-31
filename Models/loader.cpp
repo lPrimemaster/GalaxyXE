@@ -8,6 +8,7 @@
 /* Erroring */
 void Loader::loadFromObj(Model & model)
 {
+	time_t d0 = clock();
 	if (m_path.empty())
 	{
 		throw std::runtime_error("[Loader] The specified object name can't be NULL.");
@@ -18,7 +19,7 @@ void Loader::loadFromObj(Model & model)
 	p[m_path];
 	try
 	{
-		p.read(NULL);
+		p.read(GXE_BIN_DATA_LOAD);
 	}
 	catch(std::exception& e)
 	{
@@ -28,10 +29,10 @@ void Loader::loadFromObj(Model & model)
 	std::vector<glm::vec3> vertices = p.loadVRT();
 	std::vector<unsigned int> indices = p.loadIND();
 	std::vector<glm::vec2> uvs = p.loadUVS();
-	std::vector<glm::vec3> normals; // <- Not using
+	std::vector<glm::vec3> normals = p.loadNRM();
 
-	loadRaw(model, vertices, indices, uvs);
-	std::cout << "[Engine] Model loaded successfully! -> " << m_path << std::endl;
+	loadRaw(model, vertices, indices, uvs, normals);
+	std::cout << "[Engine] Model loaded successfully! " << "(" << (clock() - d0) << " clocks)" << " -> " << m_path << std::endl;
 }
 
 
@@ -40,13 +41,14 @@ void Loader::loadFromCollada(Model & model)
 
 }
 
-void Loader::loadRaw(Model & model, std::vector<glm::vec3> vertices, std::vector<unsigned int> indices, std::vector<glm::vec2> uvs)
+void Loader::loadRaw(Model & model, std::vector<glm::vec3> vertices, std::vector<unsigned int> indices, std::vector<glm::vec2> uvs, std::vector<glm::vec3> normals)
 {
 	genVAO(model);
-	model.getPrimitiveCount() = indices.size();
+	model.getVertexCount() = indices.size();
 	loadEBO(indices, model);
 	loadVBO(vertices, model, "VRT");
 	loadVBO(uvs, model, "UVS");
+	loadVBO(normals, model, "NRM");
 	glBindVertexArray(0);
 }
 
@@ -150,7 +152,7 @@ void Loader::loadVBO(const std::vector<glm::vec3> & data, Model & model, const s
 	glGenBuffers(1, buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
 	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec3), &data.front(), GL_STATIC_DRAW);
-	
+
 	glVertexAttribPointer(model.getBufferCount(), 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
 	glEnableVertexAttribArray(model.getBufferCount()++);
 

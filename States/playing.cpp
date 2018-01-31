@@ -8,10 +8,10 @@ void Playing::initialize(Application * app)
 {
 	//glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glfwSetInputMode(app->rWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(app->rWindow(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 	cam.setEye(glm::vec3(0.0f, 0.0f, 0.0f));
 
-	/* KeyHandler */
+	/* KeyHandler */ //TODO - Make key getters static...
 	keyHandler.Register("R_Mouse", [=](int) -> void {
 
 		static GLFWwindow* sWindow = app->rWindow();
@@ -89,13 +89,51 @@ void Playing::initialize(Application * app)
 	keyHandler.Register("ToggleRenderer", [=](int) -> void {
 		int z = glfwGetKey(app->rWindow(), GLFW_KEY_Z);
 		int x = glfwGetKey(app->rWindow(), GLFW_KEY_X);
+		int z1 = glfwGetKey(app->rWindow(), GLFW_KEY_C);
+		int x1 = glfwGetKey(app->rWindow(), GLFW_KEY_V);
+		int z2 = glfwGetKey(app->rWindow(), GLFW_KEY_B);
+		int x2 = glfwGetKey(app->rWindow(), GLFW_KEY_N);
+		static float r = 1.0f;
+		static float g = 1.0f;
+		static float b = 1.0f;
+		float ramp = 0.1f;
+		auto l = [=](float& var) -> void { if (var > 1.0f) var = 1.0f; else if (var < 0.0f) var = 0.0f; };
+		l(r); l(g); l(b);
 		if (z == GLFW_PRESS)
 		{
-			renderer.push(&grass[1]);
+			//blue.push(&grass[0]);
+			//blue.push(&grass[1]);
+			ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(r -= ramp, g, b), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
 		}
 		else if (x == GLFW_PRESS)
 		{
-			renderer.remove(&grass[1]);
+			//blue.remove(&grass[0]);
+			//blue.remove(&grass[1]);
+			ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(r += ramp, g, b), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
+		}
+		if (z1 == GLFW_PRESS)
+		{
+			//blue.push(&grass[0]);
+			//blue.push(&grass[1]);
+			ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(r, g -= ramp, b), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
+		}
+		else if (x1 == GLFW_PRESS)
+		{
+			//blue.remove(&grass[0]);
+			//blue.remove(&grass[1]);
+			ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(r, g += ramp, b), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
+		}
+		if (z2 == GLFW_PRESS)
+		{
+			//blue.push(&grass[0]);
+			//blue.push(&grass[1]);
+			ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(r, g, b -= ramp), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
+		}
+		else if (x2 == GLFW_PRESS)
+		{
+			//blue.remove(&grass[0]);
+			//blue.remove(&grass[1]);
+			ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(r, g, b += ramp), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
 		}
 	});
 
@@ -103,51 +141,30 @@ void Playing::initialize(Application * app)
 	modelmanager.createModelType("creatures");
 	texturemanager.createTextureType("creatures");
 
-	texturemanager.paths()["creatures"].push_back("STexture");
-	texturemanager.paths()["creatures"].push_back("pasta");
-	modelmanager.paths()["creatures"].push_back("STexture");
+	texturemanager.paths()["creatures"].push_back("beacon");
+	modelmanager.paths()["creatures"].push_back("dragon");
+	modelmanager.paths()["creatures"].push_back("beacon");
 
 	modelmanager.loadModels();
 	texturemanager.loadTextures();
 
-	/* Test Zone */
+	//FIX Spot Light and standart half vector for directional light
+	ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(1.0f), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
+	//ambiance[1].setProperties(LightProperties(GXE_POINT_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(1.0f), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
 
-	std::vector<glm::vec3> vertices =
-	{
-		glm::vec3(-1.0f, 1.0f, 0.0f), //4
-		glm::vec3(-1.0f, -1.0f, 0.0f), //3
-		glm::vec3(1.0f, 1.0f, 0.0f), //1
-		glm::vec3(1.0f, -1.0f, 0.0f) //2
-	};
-
-	std::vector<unsigned int> indices =
-	{
-		1, 2, 0, 1, 3, 2
-	};
-
-	std::vector<glm::vec2> uvs =
-	{
-		glm::vec2(1.0f, 0.0f),
-		glm::vec2(0.0f, 1.0f),
-		glm::vec2(0.0f, 0.0f),
-		glm::vec2(1.0f, 0.0f),
-		glm::vec2(1.0f, 1.0f),
-		glm::vec2(0.0f, 1.0f)
-	};
-
-	loader.loadRaw(rawmodel, vertices, indices, uvs);
-
+	renderer.push(&ambiance[0]);
+	//renderer.push(&ambiance[1]);
 
 	//use nullptr for models and textures handling
-	grass[0](modelmanager()["creatures"]["STexture"]);
-	grass[0](texturemanager()["creatures"]["STexture"]);
-	grass[0].setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	grass[0](modelmanager()["creatures"]["dragon"]);
+	//grass[0](texturemanager()["creatures"]["beacon"]);
+	grass[0].setPosition(glm::vec3(0.0f, -3.0f, -5.0f));
 	renderer.push(&grass[0]);
 
-	grass[1](&rawmodel);
-	grass[1](texturemanager()["creatures"]["pasta"]);
-	grass[1].setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-	//blue.push(&grass[1]);
+	//grass[1](modelmanager()["creatures"]["beacon"]);
+	//grass[1](texturemanager()["creatures"]["beacon"]);
+	//grass[1].setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	//renderer.push(&grass[1]);
 }
 
 void Playing::cleanup()
@@ -176,7 +193,7 @@ void Playing::handleEvents(Application * app)
 
 void Playing::update(Application * app)
 {
-	//grass[0] << glm::vec3(0.0f, 0.1f, 0.0f);
+	grass[0] << glm::vec3(0.0f, 0.0f, 0.0f);
 	//grass[1] << glm::vec3(0.0f, 0.0f, 0.0f);
 	renderer.update(cam);
 	blue.update(cam);
@@ -184,6 +201,6 @@ void Playing::update(Application * app)
 
 void Playing::draw(Application * app)
 {
-	renderer.draw();
 	blue.draw();
+	renderer.draw();
 }

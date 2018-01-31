@@ -24,4 +24,9 @@ namespace math
 	{
 		return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 	}
+
+	inline glm::vec3 normalize(glm::vec3 vec)
+	{
+		return glm::normalize(vec);
+	}
 }
