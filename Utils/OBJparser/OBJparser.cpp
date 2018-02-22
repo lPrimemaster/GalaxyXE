@@ -1,4 +1,5 @@
 #include "OBJparser.h"
+#include "../../common.h"
 #include <thread>
 #include <mutex>
 
@@ -16,10 +17,17 @@ void OBJparser::read(GXE_Flags flags)
 {
 	if (flags & GXE_OBJ_DATA || flags & GXE_BIN_DATA_PARSE)
 	{
-		FILE* f = fopen(path.c_str(), "r");
+		if (common::fileCheck("DATA/Models/" + path + ".bin"))
+		{
+			std::cout << "[Parser] DATA/Models/" + path + ".bin" << " exists, using it instead!" << std::endl;
+			loadFromBin(path);
+			return;
+		}
+		std::cout << "[Parser] DATA/Models/" + path + ".bin" << " does not exists, creating one!" << std::endl;
+		FILE* f = fopen(("DATA/Objects/" + path + ".obj").c_str(), "r");
 		if (f == NULL)
 		{
-			throw std::runtime_error("[Parser] File can't be accessed at: " + path + " (wavefront)");
+			throw std::runtime_error("[Parser] File can't be accessed at: DATA/Objects/" + path + ".obj" + " (wavefront)");
 			return;
 		}
 
@@ -47,7 +55,11 @@ void OBJparser::read(GXE_Flags flags)
 		{
 			i++; //First line not important anyways
 			if (data[i].startsWith("v "))
-				vertices.push_back(parseVec3(data[i]));
+			{
+				glm::vec3 posData = parseVec3(data[i]);
+				vertices.push_back(posData);
+				vList.push_back(LinkedVertex(vertices.size(), posData));
+			}
 			else if (data[i].startsWith("vt "))
 				tuvs.push_back(parseVec2(data[i]));
 			else if (data[i].startsWith("vn "))
@@ -90,16 +102,8 @@ void OBJparser::read(GXE_Flags flags)
 		free(uvi);
 		free(nmi);
 		fclose(f);
-	}
 
-	if (flags & GXE_BIN_DATA_PARSE)
-	{
-		parseToBin("dragon");
-	}
-
-	if (flags & GXE_BIN_DATA_LOAD)
-	{
-		loadFromBin("dragon");
+		parseToBin(path);
 	}
 
 	if (flags & 0x0EF3) //No textures

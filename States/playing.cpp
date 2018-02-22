@@ -2,7 +2,10 @@
 #include "../Entities/entity.h"
 #include "../Utils/math.h"
 
-Playing::Playing() : renderer("base", "base"), blue("base", "blue"), cam(45.0f, 16.0f/9.0f, 0.1f, 100.0f) { }
+Playing::Playing() : renderer("base", "base"), blue("base", "blue"), cam(45.0f, 16.0f / 9.0f, 0.1f, 100.0f), light(45.0f, 16.0f / 9.0f, 0.1f, 100.0f),
+ambiance(glm::vec3(0.0f, 7.0f, 0.0f), glm::vec3(1.0f))
+{
+}
 
 void Playing::initialize(Application * app)
 {
@@ -13,23 +16,26 @@ void Playing::initialize(Application * app)
 
 	/* KeyHandler */ //TODO - Make key getters static...
 	keyHandler.Register("R_Mouse", [=](int) -> void {
+		int CTRL = glfwGetKey(app->rWindow(), GLFW_KEY_LEFT_ALT);
+		if (CTRL != GLFW_PRESS)
+		{
+			static GLFWwindow* sWindow = app->rWindow();
+			static glm::dvec2 nd;
 
-		static GLFWwindow* sWindow = app->rWindow();
-		static glm::dvec2 nd;
+			static const float MX_SENSITIVITY = 0.0025f;
+			static const float MY_SENSITIVITY = 0.0025f;
 
-		static const float MX_SENSITIVITY = 0.0025f;
-		static const float MY_SENSITIVITY = 0.0025f;
+			glfwGetCursorPos(sWindow, &nd.x, &nd.y);
 
-		glfwGetCursorPos(sWindow, &nd.x, &nd.y);
+			double deltaX = glm::dvec2(nd).x - (double)(1280 / 2);
+			double deltaY = glm::dvec2(nd).y - (double)(720 / 2);
 
-		double deltaX = glm::dvec2(nd).x - (double)(1280 / 2);
-		double deltaY = glm::dvec2(nd).y - (double)(720 / 2);
+			cam.setYaw(deltaX * MX_SENSITIVITY);
+			cam.setPitch(deltaY * MY_SENSITIVITY);
+			cam.fpsRH();
 
-		cam.setYaw(deltaX * MX_SENSITIVITY);
-		cam.setPitch(deltaY * MY_SENSITIVITY);
-		cam.fpsRH();
-
-		glfwSetCursorPos(sWindow, (double)(1280 / 2), (double)(720 / 2));
+			glfwSetCursorPos(sWindow, (double)(1280 / 2), (double)(720 / 2));
+		}
 	});
 	keyHandler.Register("T_Move", [=](int) -> void {
 
@@ -51,9 +57,6 @@ void Playing::initialize(Application * app)
 		float dx = 0.0f;
 		float dy = 0.0f;
 		float dz = 0.0f;
-
-		glm::vec3 direction = cam.heading();
-		glm::vec3 oeye = cam.getEye();
 
 		if (forth == GLFW_PRESS)
 		{
@@ -79,61 +82,82 @@ void Playing::initialize(Application * app)
 		{
 			dz -= 2.0f;
 		}
+		int CTRL = glfwGetKey(app->rWindow(), GLFW_KEY_LEFT_ALT);
 
-		direction.y = 0.0f;
-		glm::vec3 ydir = glm::vec3(0.0f, 1.0f, 0.0f);
-		glm::vec3 newDir = math::cross(ydir, direction);
-		neye = oeye + direction * dx * MX_SENSITIVITY + newDir * dy * MY_SENSITIVITY + ydir * dz * MZ_SENSITIVITY;
-		cam.setEye(neye);
+		if (CTRL != GLFW_PRESS)
+		{
+			glm::vec3 direction = cam.heading();
+			glm::vec3 oeye = cam.getEye();
+
+			direction.y = 0.0f;
+			glm::vec3 ydir = glm::vec3(0.0f, 1.0f, 0.0f);
+			glm::vec3 newDir = math::cross(ydir, direction);
+			neye = oeye + direction * dx * MX_SENSITIVITY + newDir * dy * MY_SENSITIVITY + ydir * dz * MZ_SENSITIVITY;
+			cam.setEye(neye);
+		}
+		else
+		{
+			glm::vec3 direction = light.heading();
+			glm::vec3 oeye = light.getEye();
+
+			direction.y = 0.0f;
+			glm::vec3 ydir = glm::vec3(0.0f, 1.0f, 0.0f);
+			glm::vec3 newDir = math::cross(ydir, direction);
+			neye = oeye + direction * dx * MX_SENSITIVITY + newDir * dy * MY_SENSITIVITY + ydir * dz * MZ_SENSITIVITY;
+			light.setEye(neye);
+		}
 	});
-	keyHandler.Register("ToggleRenderer", [=](int) -> void {
-		int z = glfwGetKey(app->rWindow(), GLFW_KEY_Z);
-		int x = glfwGetKey(app->rWindow(), GLFW_KEY_X);
-		int z1 = glfwGetKey(app->rWindow(), GLFW_KEY_C);
-		int x1 = glfwGetKey(app->rWindow(), GLFW_KEY_V);
-		int z2 = glfwGetKey(app->rWindow(), GLFW_KEY_B);
-		int x2 = glfwGetKey(app->rWindow(), GLFW_KEY_N);
-		static float r = 1.0f;
-		static float g = 1.0f;
-		static float b = 1.0f;
-		float ramp = 0.1f;
-		auto l = [=](float& var) -> void { if (var > 1.0f) var = 1.0f; else if (var < 0.0f) var = 0.0f; };
-		l(r); l(g); l(b);
-		if (z == GLFW_PRESS)
+	keyHandler.Register("MLight", [=](int) -> void {
+		int w = glfwGetKey(app->rWindow(), GLFW_KEY_UP);
+		int a = glfwGetKey(app->rWindow(), GLFW_KEY_LEFT);
+		int s = glfwGetKey(app->rWindow(), GLFW_KEY_DOWN);
+		int d = glfwGetKey(app->rWindow(), GLFW_KEY_RIGHT);
+		int down = glfwGetKey(app->rWindow(), GLFW_KEY_END);
+		int up = glfwGetKey(app->rWindow(), GLFW_KEY_HOME);
+		
+		static glm::vec3 pos = glm::vec3(0.0f, 5.0f, 0.0f);
+
+		if (w == GLFW_PRESS)
 		{
-			//blue.push(&grass[0]);
-			//blue.push(&grass[1]);
-			ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(r -= ramp, g, b), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
+			pos.x += 0.1f;
 		}
-		else if (x == GLFW_PRESS)
+		if (s == GLFW_PRESS)
 		{
-			//blue.remove(&grass[0]);
-			//blue.remove(&grass[1]);
-			ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(r += ramp, g, b), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
+			pos.x -= 0.1f;
 		}
-		if (z1 == GLFW_PRESS)
+		if (a == GLFW_PRESS)
 		{
-			//blue.push(&grass[0]);
-			//blue.push(&grass[1]);
-			ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(r, g -= ramp, b), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
+			pos.z += 0.1f;
 		}
-		else if (x1 == GLFW_PRESS)
+		if (d == GLFW_PRESS)
 		{
-			//blue.remove(&grass[0]);
-			//blue.remove(&grass[1]);
-			ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(r, g += ramp, b), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
+			pos.z -= 0.1f;
 		}
-		if (z2 == GLFW_PRESS)
+		if (up == GLFW_PRESS)
 		{
-			//blue.push(&grass[0]);
-			//blue.push(&grass[1]);
-			ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(r, g, b -= ramp), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
+			pos.y += 0.1f;
 		}
-		else if (x2 == GLFW_PRESS)
+		if (down == GLFW_PRESS)
 		{
-			//blue.remove(&grass[0]);
-			//blue.remove(&grass[1]);
-			ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(r, g, b += ramp), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
+			pos.y -= 0.1f;
+		}
+		//grass[0].setPosition(pos);
+		ambiance.setPosition(pos);
+	});
+	keyHandler.Register("Cos", [=](int) -> void {
+
+		static float spot = 0.0f;
+		int P = glfwGetKey(app->rWindow(), GLFW_KEY_P);
+		int CRT = glfwGetKey(app->rWindow(), GLFW_KEY_LEFT_CONTROL);
+		if  (P == GLFW_PRESS)
+		{
+			if (CRT != GLFW_PRESS)
+				spot += 0.01f;
+			else
+				spot -= 0.01f;
+
+			//ambiance.setCosCutoff(spot);
+			printf("Spot: %f\n", spot);
 		}
 	});
 
@@ -141,30 +165,29 @@ void Playing::initialize(Application * app)
 	modelmanager.createModelType("creatures");
 	texturemanager.createTextureType("creatures");
 
-	texturemanager.paths()["creatures"].push_back("beacon");
-	modelmanager.paths()["creatures"].push_back("dragon");
+	modelmanager.paths()["creatures"].push_back("sphere");
+	modelmanager.paths()["creatures"].push_back("plane");
 	modelmanager.paths()["creatures"].push_back("beacon");
+
+	texturemanager.paths()["creatures"].push_back("beacon");
+	texturemanager.paths()["creatures"].push_back("stallTexture");
 
 	modelmanager.loadModels();
 	texturemanager.loadTextures();
 
-	//FIX Spot Light and standart half vector for directional light
-	ambiance[0].setProperties(LightProperties(GXE_DIRECTIONAL_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(1.0f), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
-	//ambiance[1].setProperties(LightProperties(GXE_POINT_LIGHT, glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(1.0f), glm::vec3(0.1f), 0.7f, 0.0f, 0.2f));
+	//FIX Specular light and ambient too
+	renderer.push(&ambiance);
 
-	renderer.push(&ambiance[0]);
-	//renderer.push(&ambiance[1]);
-
-	//use nullptr for models and textures handling
-	grass[0](modelmanager()["creatures"]["dragon"]);
-	//grass[0](texturemanager()["creatures"]["beacon"]);
-	grass[0].setPosition(glm::vec3(0.0f, -3.0f, -5.0f));
+	grass[0](modelmanager()["creatures"]["beacon"]);
+	//grass[0](texturemanager()["creatures"]["Stex"]);
+	grass[0].setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	renderer.push(&grass[0]);
 
-	//grass[1](modelmanager()["creatures"]["beacon"]);
-	//grass[1](texturemanager()["creatures"]["beacon"]);
-	//grass[1].setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-	//renderer.push(&grass[1]);
+	//use nullptr for models and textures handling
+	grass[1](modelmanager()["creatures"]["plane"]);
+	grass[1](texturemanager()["creatures"]["plane"]);
+	grass[1].setPosition(glm::vec3(0.0f, -0.25f, 0.0f));
+	renderer.push(&grass[1]);
 }
 
 void Playing::cleanup()
@@ -183,7 +206,8 @@ void Playing::handleEvents(Application * app)
 {
 	keyHandler.Trigger("R_Mouse", NULL);
 	keyHandler.Trigger("T_Move", NULL);
-	keyHandler.Trigger("ToggleRenderer", NULL);
+	keyHandler.Trigger("MLight", NULL);
+	keyHandler.Trigger("Cos", NULL);
 
 	if (glfwWindowShouldClose(app->rWindow()))
 	{
@@ -194,7 +218,7 @@ void Playing::handleEvents(Application * app)
 void Playing::update(Application * app)
 {
 	grass[0] << glm::vec3(0.0f, 0.0f, 0.0f);
-	//grass[1] << glm::vec3(0.0f, 0.0f, 0.0f);
+	grass[1] << 10.0f;
 	renderer.update(cam);
 	blue.update(cam);
 }

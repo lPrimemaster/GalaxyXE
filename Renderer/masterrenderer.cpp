@@ -1,5 +1,6 @@
 #include "masterrenderer.h"
 #include "../camera.h"
+#include "../Bitmap.h"
 
 MasterRenderer::MasterRenderer(const std::string & vertexShaderFile, const std::string & fragmentShaderFile) : m_sshader(vertexShaderFile, fragmentShaderFile)
 {
@@ -9,21 +10,15 @@ MasterRenderer::MasterRenderer(const std::string & vertexShaderFile, const std::
 void MasterRenderer::update(Camera & camera)
 {
 	m_sshader.bind();
-	m_sshader.setEyeDir(camera.getEye());
+	m_sshader.setEyeDir(math::normalize(camera.getEye()));
 	m_sshader.setProjViewMatrix(camera.getProjViewMatrix());
-	static float time = 0.0f;
-	m_sshader.setTime(time);
-	for (auto l : lights)
+
+	//std::cout << lights.size() << std::endl;
+	if (!lights.empty())
 	{
-		if (l->getType() == GXE_DIRECTIONAL_LIGHT)
-		{
-			l->computeHalfVector(camera);
-		}
-		if (l->isChanged())
-		{
-			m_sshader.setLight(l);
-		}
+		m_sshader.setLight(lights.at(0));
 	}
+
 	m_sshader.unbind();
 }
 

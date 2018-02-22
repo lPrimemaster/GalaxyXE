@@ -9,6 +9,7 @@
 #include "../Utils/math.h"
 #include "../Common/modelmanager.h"
 #include "../Common/texturemanager.h"
+#include "../Lights/Plight.h"
 
 class Playing : public State
 {
@@ -43,9 +44,6 @@ private:
 	/* Textures Definition */
 	TextureManager texturemanager;
 
-	Model rawmodel;
-	Loader loader;
-
 	/* Entities Definition */
 	Entity grass[2];
 
@@ -55,9 +53,10 @@ private:
 
 	/* Camera Class */
 	Camera cam;
+	Camera light;
 
 	/* Lights */
-	Light ambiance[2];
+	PLight ambiance;
 
 };
 

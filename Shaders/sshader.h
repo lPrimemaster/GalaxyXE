@@ -1,8 +1,8 @@
 #pragma once
 #include "program.h"
 #include "../Lights/light.h"
-
-#define MAX_LIGHTS 10
+#include "../Lights/dlight.h"
+#include "../Lights/lighthandler.h"
 
 class StaticShader : public Program
 {
@@ -31,6 +31,6 @@ protected:
 	GLuint m_locationEyeDirection = 0;
 
 	GLuint m_locationNumberLights = 0;
-	GLuint m_locationLightProperties[12][MAX_LIGHTS] = { 0 };
+	GLuint m_locationLightProperties[GXE_MAX_LIGHTS][12] = { 0 };
 };
 

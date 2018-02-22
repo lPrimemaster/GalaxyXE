@@ -19,7 +19,7 @@ void Loader::loadFromObj(Model & model)
 	p[m_path];
 	try
 	{
-		p.read(GXE_BIN_DATA_LOAD);
+		p.read(GXE_BIN_DATA_PARSE | GXE_OBJ_DATA | GXE_BIN_DATA_LOAD);
 	}
 	catch(std::exception& e)
 	{
@@ -101,7 +101,7 @@ void Loader::loadtexture2D(Texture& texture)
 
 void Loader::setModInternalPath(const std::string name)
 {
-	m_path = "DATA/Objects/" + name + ".obj";
+	m_path = name;
 }
 
 void Loader::setTexInternalPath(const std::string name)

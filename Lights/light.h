@@ -5,108 +5,65 @@
 #include "../Utils/math.h"
 #include "../camera.h"
 
+#define GXE_DIRECTIONAL_LIGHT    0x0F0
+#define GXE_SPOT_LIGHT           0x0F1
+#define GXE_POINT_LIGHT          0x0F2
+#define GXE_MAX_LIGHT_PROPERTIES 0x0C
+#define GXE_MAX_LIGHTS           0x02
+
 class Light
 {
 public:
-	void enable()
-	{
-		properties.isEnabled = true;
-	}
 
-	void disable()
-	{
-		properties.isEnabled = false;
-	}
+	void setAttenuationFunc(float constAttenuation, float linearAttenuation, float quadAttenuation);
+	void setPosition(glm::vec3 newPos);
 
-	void setProperties(LightProperties lp)
-	{
-		properties = lp;
-		changed = true;
-	}
 
-	void computeHalfVector(Camera cam)
-	{
-		properties.halfVector = math::normalize(cam.getEye() + properties.position);
-		changed = true;
-	}
+	//Getters
+	const glm::vec3 getPosition() const;
+	const glm::vec3 getColor() const;
+	const glm::vec3 getAmbientColor() const;
+	virtual const glm::vec3 getDirection() const = 0;
+	virtual const glm::vec3 getConeDirection() const = 0;
 
-	const int getType() const
-	{
-		return properties.type;
-	}
+	virtual const float getSpotCosCutoff() const = 0;
+	virtual const float getSpotExponent() const = 0;
 
-	const glm::vec3 getColor() const
-	{
-		return properties.color;
-	}
+	const float getShininess() const;
+	const float getStrength() const;
 
-	const glm::vec3 getAmbient() const
-	{
-		return properties.ambient;
-	}
+	const float getConstAtt() const;
+	const float getLinearAtt() const;
+	const float getQuadAtt() const;
 
-	const glm::vec3 getPosition() const
-	{
-		return properties.position;
-	}
+	const unsigned int getLightType() const;
 
-	const glm::vec3 getConeDirection() const
-	{
-		return properties.coneDirection;
-	}
+	const bool isOn() const;
 
-	const glm::vec3 getHalfVector() const
-	{
-		return properties.halfVector;
-	}
+	//OpenGL interface
 
-	const float getSpotCosCutoff() const
-	{
-		return properties.spotCosCutoff;
-	}
+protected:
+	Light();
+	//Main attributes
+	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 direction = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 ambientColor = color;
 
-	const float getSpotExponent() const
-	{
-		return properties.spotExponent;
-	}
+	glm::vec3 coneDirection = glm::vec3(0.0f, -1.0f, 0.0f);
+	float spotCosCutoff = 0.5f;
+	float spotExponent = 2.0f;
 
-	const float getConstantAttenuation() const
-	{
-		return properties.constantAttenuation;
-	}
+	//Reflection properties
+	float shininess = 2;
+	float stregth = 5;
 
-	const float getLinearAttenuation() const
-	{
-		return properties.linearAttenuation;
-	}
+	//Attenuation values for light distance / ambient reflection
+	float ambientAttenuation = 0.1f;
+	float constAtt = 1.0f;
+	float linearAtt = 1.0f;
+	float quadAtt = 1.0f;
 
-	const float getQuadraticAttenuation() const
-	{
-		return properties.quadraticAttenuation;
-	}
-
-	const bool isEnabled() const 
-	{
-		return properties.isEnabled;
-	}
-
-	const bool isChanged() const
-	{
-		return changed;
-	}
-
-	int& ID()
-	{
-		return lID;
-	}
-
-	void mark()
-	{
-		changed = false;
-	}
-
-private:
-	LightProperties properties;
-	int lID = -1;
-	bool changed = false;
+	unsigned int lightType = 0x0;
+	bool state = true;
 };
