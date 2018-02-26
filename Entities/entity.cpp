@@ -29,5 +29,5 @@ void Entity::setPosition(glm::vec3 newPos)
 glm::mat4 Entity::getModelMatrix()
 {
 	//rotation_ammount += 0.01f;
-	return scale * rotation * translation;
+	return translation * rotation * scale;
 }

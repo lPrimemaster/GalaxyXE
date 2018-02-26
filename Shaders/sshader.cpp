@@ -27,6 +27,11 @@ void StaticShader::setEyeDir(const glm::vec3 & eyeDirection)
 	loadVector3f(m_locationEyeDirection, eyeDirection);
 }
 
+void StaticShader::setDepthBiasMatrix(const glm::mat4 & matrix)
+{
+	loadMatrix4f(m_locationDepthBiasMatrix, matrix);
+}
+
 void StaticShader::loadSampler(int unit, int texture)
 {
 	int loc = glGetUniformLocation(getID(), "sampler");
@@ -48,6 +53,6 @@ void StaticShader::getUniformLocations()
 {
 	m_locationProjViewMatrix = glGetUniformLocation(getID(), "ProjView");
 	m_locationModelMatrix = glGetUniformLocation(getID(), "Model");
-
+	m_locationDepthBiasMatrix = glGetUniformLocation(getID(), "depthBias");
 	m_locationEyeDirection = glGetUniformLocation(getID(), "EyeDirection");
 }

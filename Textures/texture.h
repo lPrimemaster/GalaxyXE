@@ -5,6 +5,7 @@
 class Texture
 {
 	friend class Loader;
+	friend class ShadowShader;
 
 public:
 	Texture() = default;

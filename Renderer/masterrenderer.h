@@ -1,9 +1,11 @@
 #pragma once
 #include "renderer.h"
+#include "shadowrenderer.h"
 
 class MasterRenderer : public Renderer
 {
 public:
+	friend class ShadowRenderer;
 	MasterRenderer(const std::string & vertexShaderFile, const std::string & fragmentShaderFile);
 
 	virtual void update(Camera& camera) override;
@@ -12,7 +14,6 @@ public:
 
 private:
 	StaticShader m_sshader;
-	glm::mat4 t;
-
+	ShadowRenderer m_shadowrenderer;
 };
 

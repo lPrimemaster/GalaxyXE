@@ -10,10 +10,18 @@ const int MAX_LIGHTS = 1;
 const float shininess = 20;
 const float strength = 1;
 
+const vec2 poissonDisk[4] = vec2[](
+  vec2( -0.94201624, -0.39906216 ),
+  vec2( 0.94558609, -0.76890725 ),
+  vec2( -0.094184101, -0.92938870 ),
+  vec2( 0.34495938, 0.29387760 )
+);
+
 // IN VARS
 in vec2 fuvs;
 in vec3 surfaceNormal;
 in vec4 worldPosition;
+in vec4 shadowCoord;
 
 // OUT VARS
 out vec4 fColor;
@@ -42,9 +50,31 @@ uniform LightProperties light[MAX_LIGHTS];
 
 // UNIFORM DECLARATION
 uniform sampler2D sampler;
+uniform sampler2D shadow;
 uniform vec3 EyeDirection;
 
 //FUNCTION DEFINITION
+
+float calculateShadows(sampler2D shadowMap)
+{
+	vec3 coords = shadowCoord.xyz / shadowCoord.w;
+	float visibility = 1.0;
+	
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+	
+	for (int i=0; i < 4; i++)
+	{
+		if ( texture( shadowMap, coords.xy + poissonDisk[i]/700.0 ).r  <  coords.z )
+		{
+			visibility-=0.2;
+		}
+	}
+	
+	if(coords.z > 1.0)
+		visibility = 0.0;
+	
+	return visibility;
+}
 
 vec4 calculateLights(vec4 inColor)
 {
@@ -91,8 +121,8 @@ vec4 calculateLights(vec4 inColor)
 			specular = 0.0;
 		else
 			specular = pow(specular, shininess) * strength;
-		scatteredLight += light[i].ambient * 0.1 * attenuation + diffuse * light[i].color * attenuation;
-		reflectedLight += light[i].color * specular * attenuation;
+		scatteredLight += light[i].ambient * 0.1 * attenuation + diffuse * light[i].color * attenuation * calculateShadows(shadow);
+		reflectedLight += light[i].color * specular * attenuation * calculateShadows(shadow);
 		
 		vec3 rgb = min(inColor.rgb * scatteredLight + reflectedLight, vec3(1.0));
 		return vec4(rgb, inColor.a);		
@@ -102,6 +132,6 @@ vec4 calculateLights(vec4 inColor)
 void main()
 {
 	//vec4 color = texture(sampler, fuvs);
-	vec4 color = vec4(1.0, 0.0, 0.0, 1.0);
+	vec4 color = vec4(0.0, 0.0, 1.0, 1.0);
 	fColor = calculateLights(color);
 }

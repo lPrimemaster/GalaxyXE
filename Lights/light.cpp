@@ -12,6 +12,11 @@ void Light::setPosition(glm::vec3 newPos)
 	this->position = newPos;
 }
 
+void Light::setDirection(glm::vec3 newDir)
+{
+	this->direction = newDir;
+}
+
 const glm::vec3 Light::getPosition() const
 {
 	return position;
@@ -60,6 +65,11 @@ const unsigned int Light::getLightType() const
 const bool Light::isOn() const
 {
 	return state;
+}
+
+glm::mat4 & Light::getDepthBiasMatrix()
+{
+	return depthBias;
 }
 
 Light::Light()

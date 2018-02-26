@@ -2,6 +2,7 @@
 #include "../Models/model.h"
 #include "../Models/loader.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 #include <string>
 
 class Entity
@@ -29,7 +30,7 @@ public:
 
 	void operator<<(float scale)
 	{
-		this->scale = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
+		this->scale = glm::scale(glm::vec3(scale));
 	}
 
 	void operator<<(glm::vec3 rotationDegrees)

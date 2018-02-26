@@ -17,6 +17,7 @@ public:
 
 	void setAttenuationFunc(float constAttenuation, float linearAttenuation, float quadAttenuation);
 	void setPosition(glm::vec3 newPos);
+	void setDirection(glm::vec3 newDir);
 
 
 	//Getters
@@ -39,6 +40,8 @@ public:
 	const unsigned int getLightType() const;
 
 	const bool isOn() const;
+
+	glm::mat4& getDepthBiasMatrix();
 
 	//OpenGL interface
 
@@ -66,4 +69,7 @@ protected:
 
 	unsigned int lightType = 0x0;
 	bool state = true;
+
+private:
+	glm::mat4 depthBias;
 };

@@ -10,9 +10,11 @@ out vec2 fuvs;
 
 out vec3 surfaceNormal;
 out vec4 worldPosition;
+out vec4 shadowCoord;
 
 uniform mat4 ProjView;
 uniform mat4 Model;
+uniform mat4 depthBias;
 
 uniform vec3 lightPosition;
 
@@ -24,4 +26,6 @@ void main()
     fuvs = uvs;
     surfaceNormal = normalize((Model * vec4(normal, 0.0)).xyz);
     worldPosition = worldPos;
+	
+	shadowCoord = depthBias * worldPos;
 }

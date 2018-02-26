@@ -28,6 +28,7 @@ void Application::initialize(glm::uvec2 resolution, const char* title)
 	glDepthFunc(GL_LESS);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_SCISSOR_TEST);
 
 	rApp = true;
 }
