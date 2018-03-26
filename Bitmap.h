@@ -27,6 +27,8 @@ public:
 		return width;
 	}
 
+	static void writeBMP(const char* filepath, unsigned int bufferSize, void* pixels);
+
 private:
 	unsigned char* data;
 	int width, height;

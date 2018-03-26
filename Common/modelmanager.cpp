@@ -1,5 +1,10 @@
 #include "modelmanager.h"
 
+ModelManager::~ModelManager()
+{
+	buffer.clear();
+}
+
 void ModelManager::createModelType(const std::string& identifier)
 {
 	if (loc.empty() || !loc.count(identifier))
@@ -32,12 +37,12 @@ void ModelManager::loadModels()
 {
 	for (const auto& data : loc)
 	{
-		buffer.emplace(data.first, std::vector<Model>());
+		buffer.emplace(data.first, std::map<std::string, Model*>());
 		for (const auto& path : data.second)
 		{
-			Model newmodel;
-			loader.loadModel(newmodel, path);
-			buffer[data.first].push_back(newmodel);
+			Model* newmodel = new Model();
+			loader.loadModel(*newmodel, path);
+			buffer[data.first].emplace(path, newmodel);
 		}
 	}
 }

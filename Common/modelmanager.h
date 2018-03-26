@@ -8,11 +8,12 @@
 class ModelManager
 {
 private:
-	typedef std::map<std::string, std::vector<Model>> GXE_Model_Buffer; // make this a double map <--
+	typedef std::map<std::string, std::map<std::string, Model*>> GXE_Model_Buffer; // make this a double map <--
 	typedef std::map<std::string, std::vector<std::string>> GXE_Loc_Buffer;
+
 public:
 	ModelManager() = default;
-	~ModelManager() = default;
+	~ModelManager();
 
 	void createModelType(const std::string& identifier);
 	void deleteModelType(const std::string& identifier);
@@ -35,7 +36,6 @@ public:
 private:
 	GXE_Model_Buffer buffer;
 	GXE_Loc_Buffer loc;
-	std::vector<bool> loaded;
 	Loader loader; //VRAM POINTERS LIVE HERE. DO NOT ERASE AT ANY CIRCUMSTANCE!
 
 };

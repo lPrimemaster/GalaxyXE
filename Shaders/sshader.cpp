@@ -55,4 +55,10 @@ void StaticShader::getUniformLocations()
 	m_locationModelMatrix = glGetUniformLocation(getID(), "Model");
 	m_locationDepthBiasMatrix = glGetUniformLocation(getID(), "depthBias");
 	m_locationEyeDirection = glGetUniformLocation(getID(), "EyeDirection");
+
+	//Move glUniform1i out of here later
+	m_locationSamplers[0] = glGetUniformLocation(getID(), "sampler");
+	glUniform1i(m_locationSamplers[0], 0);
+	m_locationSamplers[1] = glGetUniformLocation(getID(), "shadow");
+	glUniform1i(m_locationSamplers[1], 1);
 }

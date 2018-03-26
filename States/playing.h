@@ -10,6 +10,8 @@
 #include "../Common/modelmanager.h"
 #include "../Common/texturemanager.h"
 #include "../Lights/Plight.h"
+#include "../Lights/shadowbox.h"
+#include "../Physics/pengine.h"
 
 class Playing : public State
 {
@@ -45,18 +47,29 @@ private:
 	TextureManager texturemanager;
 
 	/* Entities Definition */
-	Entity grass[2];
+	Entity grass[3];
 
 	/* Renderers */
 	MasterRenderer renderer;
-	MasterRenderer blue;
+	MasterRenderer wireframes;
 
 	/* Camera Class */
 	Camera cam;
 	Camera light;
 
 	/* Lights */
-	PLight ambiance;
+	DLight ambiance;
+
+	/* Physics */
+	PEngine physics;
+	std::mutex mtx;
+
+	/* Test */
+	Loader loader;
+
+	Model* boundingBox;
+
+	Gui gui;
 
 };
 

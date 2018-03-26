@@ -25,3 +25,8 @@ unsigned int & Model::getVertexCount()
 	return vertexCount;
 }
 
+unsigned int & Model::getTrueVertexCount()
+{
+	return trueVertexCount;
+}
+

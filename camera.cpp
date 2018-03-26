@@ -5,7 +5,7 @@ Camera::Camera(GLfloat fov, GLfloat aspect, GLfloat near, GLfloat far) : m_fov(g
 	this->m_planes[this->near] = near;
 	this->m_planes[this->far] = far;
 
-	eye = glm::vec3(0.0f, 0.0f, -10.0f);
+	eye = glm::vec3(0.0f, 0.0f, 0.0f);
 	direction = glm::vec3(0.0f);
 
 	m_projectMatrix = glm::perspective(m_fov, this->m_aspect, this->m_planes[this->near], this->m_planes[this->far]);
@@ -68,4 +68,24 @@ const glm::mat4 Camera::getProjectMatrix() const
 const glm::mat4 Camera::getProjViewMatrix() const
 {
 	return m_projectMatrix * m_viewMatrix;
+}
+
+const float Camera::getYaw() const
+{
+	return yaw;
+}
+
+const float Camera::getPitch() const
+{
+	return pitch;
+}
+
+const float Camera::getFOV() const
+{
+	return m_fov;
+}
+
+const float Camera::getAspectRatio() const
+{
+	return m_aspect;
 }

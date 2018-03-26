@@ -2,18 +2,20 @@
 #include "../Entities/entity.h"
 #include "../Utils/math.h"
 
-Playing::Playing() : renderer("base", "base"), blue("base", "blue"), cam(45.0f, 16.0f / 9.0f, 0.1f, 100.0f), light(45.0f, 16.0f / 9.0f, 0.1f, 100.0f),
-ambiance(glm::vec3(0.0f, 7.0f, 0.0f), glm::vec3(1.0f))
+Playing::Playing() : renderer("base", "base"), wireframes("base", "brightgreen"), cam(45.0f, 16.0f / 9.0f, 0.1f, 1000.0f), light(45.0f, 16.0f / 9.0f, 0.1f, 100.0f),
+ambiance(glm::vec3(0.0f, 7.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f)), physics(&mtx)
 {
 }
 
 void Playing::initialize(Application * app)
 {
-	//glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	glLineWidth(5.0f);
 	glCullFace(GL_BACK);
 	glfwSetInputMode(app->rWindow(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 	cam.setEye(glm::vec3(0.0f, 0.0f, 0.0f));
-
+	
 	/* KeyHandler */ //TODO - Make key getters static...
 	keyHandler.Register("R_Mouse", [=](int) -> void {
 		int CTRL = glfwGetKey(app->rWindow(), GLFW_KEY_LEFT_ALT);
@@ -30,8 +32,8 @@ void Playing::initialize(Application * app)
 			double deltaX = glm::dvec2(nd).x - (double)(1280 / 2);
 			double deltaY = glm::dvec2(nd).y - (double)(720 / 2);
 
-			cam.setYaw(deltaX * MX_SENSITIVITY);
-			cam.setPitch(deltaY * MY_SENSITIVITY);
+			cam.setYaw((float)deltaX * MX_SENSITIVITY);
+			cam.setPitch((float)deltaY * MY_SENSITIVITY);
 			cam.fpsRH();
 
 			glfwSetCursorPos(sWindow, (double)(1280 / 2), (double)(720 / 2));
@@ -115,7 +117,7 @@ void Playing::initialize(Application * app)
 		int down = glfwGetKey(app->rWindow(), GLFW_KEY_END);
 		int up = glfwGetKey(app->rWindow(), GLFW_KEY_HOME);
 		
-		static glm::vec3 pos = glm::vec3(0.0f, 5.0f, 0.0f);
+		static glm::vec3 pos = glm::vec3(0.0f, 7.0f, 0.0f);
 
 		if (w == GLFW_PRESS)
 		{
@@ -141,8 +143,7 @@ void Playing::initialize(Application * app)
 		{
 			pos.y -= 0.1f;
 		}
-		//grass[0].setPosition(pos);
-		ambiance.setPosition(pos);
+		ambiance.setDirection(pos);
 	});
 	keyHandler.Register("Cos", [=](int) -> void {
 
@@ -165,33 +166,48 @@ void Playing::initialize(Application * app)
 	modelmanager.createModelType("creatures");
 	texturemanager.createTextureType("creatures");
 
-	modelmanager.paths()["creatures"].push_back("sphere");
 	modelmanager.paths()["creatures"].push_back("plane");
-	modelmanager.paths()["creatures"].push_back("beacon");
+	modelmanager.paths()["creatures"].push_back("dragon");
+	modelmanager.paths()["creatures"].push_back("stall");
 
-	texturemanager.paths()["creatures"].push_back("beacon");
+	texturemanager.paths()["creatures"].push_back("boi");
 	texturemanager.paths()["creatures"].push_back("stallTexture");
 
 	modelmanager.loadModels();
 	texturemanager.loadTextures();
 
-	//FIX Specular light and ambient too
-	renderer.push(&ambiance);
+	gui.associateTexture(texturemanager()["creatures"]["boi"]->getTexture());
+	gui.setPosition(glm::vec2(100.0f, 100.0f));
 
-	grass[0](modelmanager()["creatures"]["beacon"]);
-	//grass[0](texturemanager()["creatures"]["Stex"]);
-	grass[0].setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-	renderer.push(&grass[0]);
+	renderer.push(&ambiance);
+	wireframes.push(&ambiance); // Feature pointer needs to be checked for crashing
+
+	grass[0](modelmanager()["creatures"]["plane"]);
+	//grass[0](texturemanager()["creatures"]["stallTexture"]);
+	grass[0].setPosition(glm::vec3(0.0f, -0.5f, 0.0f));
+	//renderer.push(&grass[0]);
 
 	//use nullptr for models and textures handling
-	grass[1](modelmanager()["creatures"]["plane"]);
-	grass[1](texturemanager()["creatures"]["plane"]);
-	grass[1].setPosition(glm::vec3(0.0f, -0.25f, 0.0f));
+	grass[1](modelmanager()["creatures"]["stall"]);
+	grass[1](texturemanager()["creatures"]["stallTexture"]);
+	//grass[1].setPosition(glm::vec3(0.0f, -0.25f, 0.0f));
 	renderer.push(&grass[1]);
+	physics.createPhysObj(&grass[1]);
+
+	boundingBox = new Model();
+	boundingBox->attachParam(GXE_MODEL_WIREFRAME, GXE_ON);
+	boundingBox->attachParam(GXE_MODEL_RENDER_TYPE, GL_TRIANGLE_STRIP);
+	loader.loadRaw(*boundingBox, grass[1].getBody().getColisionTree().getBoundingVertices());
+	grass[2](boundingBox);
+	grass[2].attach(&grass[1]);
+	wireframes.push(&grass[2]);
+
+	physics.startThread();
 }
 
 void Playing::cleanup()
 {
+	physics.stopThread();
 }
 
 void Playing::pause()
@@ -217,14 +233,19 @@ void Playing::handleEvents(Application * app)
 
 void Playing::update(Application * app)
 {
-	grass[0] << glm::vec3(0.0f, 0.0f, 0.0f);
-	grass[1] << 10.0f;
+	grass[0] << 10.0f;
+	grass[1] << 1.0f;
+	gui << 0.1f;
 	renderer.update(cam);
-	blue.update(cam);
+	wireframes.update(cam);
+	//gui.update();
 }
 
 void Playing::draw(Application * app)
 {
-	blue.draw();
+	mtx.lock();
 	renderer.draw();
+	wireframes.draw();
+	//gui.draw();
+	mtx.unlock();
 }

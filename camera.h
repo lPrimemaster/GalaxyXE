@@ -20,6 +20,11 @@ public:
 	const glm::mat4 getProjectMatrix() const;
 	const glm::mat4 getProjViewMatrix() const;
 
+	const float getYaw() const;
+	const float getPitch() const;
+	const float getFOV() const;
+	const float getAspectRatio() const;
+
 private:
 	GLfloat m_fov;
 	GLfloat m_aspect;

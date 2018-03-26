@@ -5,6 +5,8 @@
 #include "../Shaders/shadowshader.h"
 #include "../Textures/texture.h"
 #include "../Lights/light.h"
+#include "../Lights/shadowbox.h"
+#include "../Gui/gui.h"
 
 class MasterRenderer;
 
@@ -16,14 +18,16 @@ public:
 
 	void update(MasterRenderer* renderer, Camera & cam);
 	void draw(MasterRenderer * renderer);
+	std::map<Light*, Texture*>& getShadowMaps();
 
 private:
 	ShadowShader m_shadowshader;
-	StaticShader m_sshader2;
 	std::map<Light*, Texture*> shadowMaps;
 	Loader loader;
 	glm::mat4 nMat;
 	GLuint framebuffer;
+
+	Gui gui;
 
 	glm::mat4 biasMatrix;
 

@@ -6,9 +6,16 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
+#include <thread>
+#include <mutex>
+#include <chrono>
+#include <fstream>
+#include <cstdint>
+#include <experimental/filesystem>
 
 class Entity;
 
+const unsigned int GXE_HARDWARE_THREAD_CONCURRENCY = std::thread::hardware_concurrency();
 
 namespace loader
 {
@@ -17,6 +24,17 @@ namespace loader
 	glm::vec3 parseVec3(const char* buffer);
 	glm::vec2 parseVec2(const char* buffer);
 
+}
+
+namespace common
+{
+	inline bool fileCheck(const std::experimental::filesystem::path& p)
+	{
+		if (std::experimental::filesystem::exists(p))
+			return true;
+		else
+			return false;
+	}
 }
 
 namespace collada
@@ -122,3 +140,5 @@ namespace initializer
 	bool createContext(GLFWwindow* window, glm::uvec2 resolution, const char* title);
 	void checkContext(bool contextret);
 }
+
+

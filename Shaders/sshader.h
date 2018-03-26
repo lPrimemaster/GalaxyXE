@@ -33,6 +33,8 @@ protected:
 
 	GLuint m_locationEyeDirection = 0;
 
+	GLuint m_locationSamplers[2] = { 0 };
+
 	GLuint m_locationNumberLights = 0;
 	GLuint m_locationLightProperties[GXE_MAX_LIGHTS][12] = { 0 };
 };

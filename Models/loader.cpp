@@ -5,7 +5,7 @@
 #include "../Bitmap.h"
 #include "../Utils/OBJparser/OBJparser.h"
 
-/* Erroring */
+
 void Loader::loadFromObj(Model & model)
 {
 	time_t d0 = clock();
@@ -45,10 +45,30 @@ void Loader::loadRaw(Model & model, std::vector<glm::vec3> vertices, std::vector
 {
 	genVAO(model);
 	model.getVertexCount() = indices.size();
+	model.getTrueVertexCount() = vertices.size();
 	loadEBO(indices, model);
 	loadVBO(vertices, model, "VRT");
 	loadVBO(uvs, model, "UVS");
 	loadVBO(normals, model, "NRM");
+	glBindVertexArray(0);
+}
+
+void Loader::loadRaw(Model & model, std::vector<glm::vec3> vertices)
+{
+	genVAO(model);
+	model.modelType = GXE_ALT_MODEL;
+	model.getVertexCount() = vertices.size();
+	loadVBO(vertices, model, "VRT");
+	glBindVertexArray(0);
+}
+
+void Loader::loadRaw(Model & model, std::vector<glm::vec3> vertices, std::vector<unsigned int> indices)
+{
+	genVAO(model);
+	model.modelType = GXE_DEFAULT_MODEL;
+	model.getVertexCount() = vertices.size();
+	loadEBO(indices, model);
+	loadVBO(vertices, model, "VRT");
 	glBindVertexArray(0);
 }
 
@@ -135,6 +155,77 @@ void Loader::loadTexture(Texture & texture, const std::string path)
 	}
 }
 
+void Loader::loadShadowTexture(Texture & texture, GXE_Flags type)
+{
+	switch (type)
+	{
+	case GXE_ORTHOGONAL_MAP:
+		loadOrthoMap(texture);
+		break;
+	case GXE_PERSPECTIVE_MAP:
+		loadPerspMap(texture);
+		break;
+	case GXE_CUBE_PERSPECTIVE_MAP:
+		loadCubePMap(texture);
+		break;
+	default: 
+		break;
+	}
+
+	glBindTexture(texture.target, 0);
+
+	if (glIsTexture(texture.getTexture()))
+	{
+		std::cout << "[Engine] Texture allocated successfully! ID [" << texture.getTexture() << "] for shadowMapping."  << std::endl;
+	}
+	else
+	{
+		std::cout << "[Engine] Failed to allocate texture for shadowMapping! " << std::endl;
+	}
+}
+
+void Loader::loadTextureSB(Texture & texture, std::string halfPath)
+{
+	m_tex_path = "DATA/Textures/SkyBoxes/" + halfPath;
+
+	Bitmap* map0 = new Bitmap(m_tex_path + "_rt.tga");
+	Bitmap* map1 = new Bitmap(m_tex_path + "_lf.tga");
+	Bitmap* map2 = new Bitmap(m_tex_path + "_up.tga");
+	Bitmap* map3 = new Bitmap(m_tex_path + "_dn.tga");
+	Bitmap* map4 = new Bitmap(m_tex_path + "_bk.tga");
+	Bitmap* map5 = new Bitmap(m_tex_path + "_ft.tga");
+
+	Bitmap* maps[6] = {map0, map1, map2, map3, map4, map5};
+
+	texture.target = GL_TEXTURE_CUBE_MAP;
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &texture.texture);
+	glBindTexture(texture.target, texture.texture);
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	for (int i = 0; i < 6; i++)
+	{
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, maps[i]->getWidth(), maps[i]->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, (*maps[i])());
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	if (glIsTexture(texture.getTexture()))
+	{
+		std::cout << "[Engine] Texture loaded successfully! ID [" << texture.getTexture() << "] for skybox : " << m_tex_path << std::endl;
+	}
+	else
+	{
+		std::cout << "[Engine] Failed to load texture! -> " << m_tex_path << std::endl;
+	}
+
+	delete map0, map1, map2, map3, map4, map5;
+}
+
 void Loader::loadEBO(const std::vector<unsigned int> & indices, Model & model)
 {
 	GLuint elementbuffer[1];
@@ -180,4 +271,35 @@ void Loader::genVAO(Model & model)
 	glGenVertexArrays(1, vao);
 	glBindVertexArray(vao[0]);
 	model.getVAO() = vao[0];
+}
+
+void Loader::loadOrthoMap(Texture & texture)
+{
+	glActiveTexture(GL_TEXTURE1);
+	texture.target = GL_TEXTURE_2D;
+	glGenTextures(1, &texture.texture);
+	glBindTexture(texture.target, texture.texture);
+
+	glTexImage2D(texture.target, 0, GL_DEPTH_COMPONENT32, 1280, 720, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+
+
+	float borderColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glActiveTexture(GL_TEXTURE0);
+}
+
+void Loader::loadPerspMap(Texture & texture)
+{
+}
+
+void Loader::loadCubePMap(Texture & texture)
+{
 }

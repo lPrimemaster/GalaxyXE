@@ -1,11 +1,13 @@
 #pragma once
 #include "../common.h"
 #include "../Models/loader.h"
+#include "../Gui/gui.h"
 
 class Texture
 {
 	friend class Loader;
 	friend class ShadowShader;
+	friend void Gui::associateTexture(const GLuint buffer);
 
 public:
 	Texture() = default;

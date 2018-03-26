@@ -1,9 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-
 #include <iostream>
 #include <vector>
-#include <thread>
 #include "App/application.h"
 
 /* --------------------------------- */

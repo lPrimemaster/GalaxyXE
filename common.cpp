@@ -89,6 +89,7 @@ GLuint loader::shaderLoader(const std::string& vertexShader, const std::string& 
 	catch (std::runtime_error& e)
 	{
 		std::cout << e.what() << std::endl;
+		exit(-1);
 	}
 	GLuint programID;
 	try
@@ -106,6 +107,7 @@ GLuint loader::shaderLoader(const std::string& vertexShader, const std::string& 
 	return programID;
 }
 
+/* Deprecated */
 glm::vec3 loader::parseVec3(const char * buffer)
 {
 	glm::vec3 vector;
@@ -113,6 +115,7 @@ glm::vec3 loader::parseVec3(const char * buffer)
 	return vector;
 }
 
+/* Deprecated */
 glm::vec2 loader::parseVec2(const char * buffer)
 {
 	glm::vec2 vector;
@@ -120,11 +123,13 @@ glm::vec2 loader::parseVec2(const char * buffer)
 	return vector;
 }
 
+/* Deprecated */
 std::pair<Entity, std::string> initializer::makePair(Entity entity, std::string identifier)
 {
 	return std::make_pair(entity, identifier);
 }
 
+/* Deprecated */
 bool initializer::createContext(GLFWwindow* window, glm::uvec2 resolution, const char* title)
 {
 	//GLFW3 INIT
@@ -152,7 +157,6 @@ bool initializer::createContext(GLFWwindow* window, glm::uvec2 resolution, const
 	}
 }
 
-
 /* Deprecated */
 void initializer::checkContext(bool contextret)
 {
@@ -167,4 +171,3 @@ void initializer::checkContext(bool contextret)
 		putchar('\n');
 	}
 }
-

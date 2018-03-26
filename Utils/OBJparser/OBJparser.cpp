@@ -57,8 +57,8 @@ void OBJparser::read(GXE_Flags flags)
 			if (data[i].startsWith("v "))
 			{
 				glm::vec3 posData = parseVec3(data[i]);
-				vertices.push_back(posData);
 				vList.push_back(LinkedVertex(vertices.size(), posData));
+				vertices.push_back(posData);
 			}
 			else if (data[i].startsWith("vt "))
 				tuvs.push_back(parseVec2(data[i]));

@@ -1,6 +1,7 @@
 #pragma once
 #include "renderer.h"
 #include "shadowrenderer.h"
+#include "skyrenderer.h"
 
 class MasterRenderer : public Renderer
 {
@@ -15,5 +16,6 @@ public:
 private:
 	StaticShader m_sshader;
 	ShadowRenderer m_shadowrenderer;
+	SkyRenderer m_skyrenderer;
 };
 
